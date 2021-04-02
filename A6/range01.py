@@ -19,9 +19,9 @@ def distance():
     time.sleep(0.00001)
     gpio.output(trig, False)
     
-    #pulse_start, pulse_end = 0, 0
-    #for _ in range(1000000):
-        #print(gpio.input(echo))
+    # pulse_start, pulse_end = 0, 0
+    # for _ in range(1000000):
+    #    print(gpio.input(echo))
 
 
     # Generate echo time signal 

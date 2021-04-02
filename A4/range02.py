@@ -6,6 +6,7 @@ trig = 16
 echo = 18
 
 def distance(num_measure=10):
+    gpio.cleanup()
     gpio.setmode(gpio.BOARD)
     gpio.setup(trig, gpio.OUT)
     gpio.setup(echo, gpio.IN)
@@ -24,7 +25,7 @@ def distance(num_measure=10):
         time.sleep(0.00001)
         gpio.output(trig, False)
     
-        # pulse_start, pulse_end = 0, 0
+        pulse_start, pulse_end = 0, 0
         
         # Generate echo time signal 
         while gpio.input(echo) == 0:
