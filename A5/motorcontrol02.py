@@ -75,11 +75,12 @@ def pivotright(tf):
 
 
 
-def drive(event):
+def drive(event, val):
     init()
     print("Key: ", event)
     key_press = event
     tf = 1
+    tf = tf / val
     if key_press.lower() == 'w':
         forward(tf)
     elif key_press.lower() == 's':
@@ -93,11 +94,14 @@ def drive(event):
 
 while True:
     key_press = input("Select driving mode: ")
+    val_press = input('value')
+    val_press = int(val_press)
+
     if key_press == 'q':
         break
-    drive(key_press)
+    drive(key_press, val_press)
 
 
 
-forward(2)
+# forward(2)
 
