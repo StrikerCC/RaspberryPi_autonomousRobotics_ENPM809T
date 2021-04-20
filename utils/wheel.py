@@ -137,13 +137,13 @@ class wheelControlled(wheel):
         self.duty_cycle = 50    # duty cycle to control motor effect voltage
         self.encoder_ = encoder()
 
-    def __move(self, direction='a', value=50):
+    def __move(self, direction='a', value=50.0):
         self._init_ouput_pins()
         print("Key: ", direction)
         key_press = direction
         if key_press in self.__command_2_movement.keys():
             func_move = self.__command_2_movement[key_press]  # only move for one second
-            func_move(int(value))
+            func_move(float(value))
         else:
             print("Invalid key presses!")
 
@@ -151,7 +151,7 @@ class wheelControlled(wheel):
         # set all pins low
         super().stop()
 
-    def __forward(self, distance=1):
+    def __forward(self, distance=1.0):
         self._init_ouput_pins()
 
         # independent motor control via pwm, move forward with half speed
@@ -168,7 +168,7 @@ class wheelControlled(wheel):
         self.stop()
         gpio.cleanup()
 
-    def __reverse(self, distance=1):
+    def __reverse(self, distance=1.0):
         self._init_ouput_pins()
         # left wheele reverse
         gpio.output(self.pin_in2, True)
@@ -182,7 +182,7 @@ class wheelControlled(wheel):
         self.stop()
         gpio.cleanup()
 
-    def __pivotleft(self, distance=1):
+    def __pivotleft(self, distance=1.0):
         self._init_ouput_pins()
         # left wheele reverse
         gpio.output(self.pin_in2, True)
@@ -196,7 +196,7 @@ class wheelControlled(wheel):
         self.stop()
         gpio.cleanup()
 
-    def __pivotright(self, distance=1):
+    def __pivotright(self, distance=1.0):
         self._init_ouput_pins()
         # left wheele forward
         gpio.output(self.pin_in1, True)
@@ -215,7 +215,7 @@ class wheelControlled(wheel):
         if key_press == 'q':
             return False
         elif key_press in self.__command_2_movement.keys():
-            value = int(input("enter value for this move: distance in cm, angle in degree"))
+            value = float(input("enter value for this move: distance in cm, angle in degree"))
             self.__move(direction=key_press, value=value)
             return True
         else:
