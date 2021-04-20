@@ -69,7 +69,7 @@ def main():
 
         if button_front_left >= 960 and button_back_right >= 960:
             shutdown()          
-            print("endcoder count finished, encoder state recorded at", filename)
+            print("endcoder count finished, encoder state recorded at", filename_br)
             break
     file_br.close()
     file_fl.close()

@@ -29,13 +29,9 @@ def main():
 
     """go live"""
     while True:
-
         camera_.view_some_frames(num_frames=8)
-        if not wheel_.move_with_ui():
+        if not wheel_.read_user_input_then_move_acoordingly():   # break when user input q
             break
-
-
-
 
 
 
