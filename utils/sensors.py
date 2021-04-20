@@ -40,7 +40,7 @@ class encoder():
         button = int(0)
         time.sleep(0.01)
 
-        for i in range(0, 1000):
+        for i in range(0, 1000000):
             if int(gpio.input(pin)) != int(button):
                 button = int(gpio.input(pin))
                 counter += 1
