@@ -1,6 +1,6 @@
 import RPi.GPIO as gpio
 import time
-from utils.sensors import encoder
+from sensors import encoder
 
 class wheel():
     def __init__(self):
@@ -19,7 +19,8 @@ class wheel():
         }
 
     def __del__(self):
-        self.shutdown()
+        # :self.shutdown()
+        pass
 
     def _init_ouput_pins(self):
         gpio.setmode(gpio.BOARD)
@@ -106,7 +107,6 @@ class wheel():
     def read_user_input_then_move_acoordingly(self):
         key_press = input("Select driving mode: ")
         if key_press == 'q':
-            self.stop()
             return False
         elif key_press in self.__command_2_movement:
             self.__move(key_press)
@@ -212,7 +212,6 @@ class wheelControlled(wheel):
     def read_user_input_then_move_acoordingly(self):
         key_press = input("Select driving mode: ")
         if key_press == 'q':
-            self.stop()
             return False
         elif key_press in self.__command_2_movement:
             value = int(input("enter value for this move: distance in cm, angle in degree"))

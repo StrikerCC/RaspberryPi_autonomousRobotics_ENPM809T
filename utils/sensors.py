@@ -5,6 +5,7 @@ import time
 class encoder():
     def __init__(self):
         self.pin_left_encoder_pin, self.pin_right_encoder_pin = 7, 12
+        gpio.setmode(gpio.BOARD)
         gpio.setup(self.pin_left_encoder_pin, gpio.IN, pull_up_down=gpio.PUD_UP)  # front left encoder pin
         gpio.setup(self.pin_right_encoder_pin, gpio.IN, pull_up_down=gpio.PUD_UP)  # back right encoder pin
 
@@ -22,7 +23,7 @@ class encoder():
 
         for i in range(0, 1000):
             print('counter = ', counter, "GPIO state: ", gpio.input(12))
-            if int(gpio.input()) != int(button):
+            if int(gpio.input(pin)) != int(button):
                 button = int(gpio.input(pin))
                 counter += 1
             print('encoder count to ', counter)
@@ -40,7 +41,7 @@ class encoder():
         time.sleep(0.1)
 
         for i in range(0, 1000):
-            if int(gpio.input()) != int(button):
+            if int(gpio.input(pin)) != int(button):
                 button = int(gpio.input(pin))
                 counter += 1
             print('encoder count to ', counter)
