@@ -1,6 +1,6 @@
 import RPi.GPIO as gpio
 import time
-
+from utils.sensors import encoder
 
 class wheel():
     def __init__(self):
@@ -15,7 +15,7 @@ class wheel():
             'w': self.__forward,
             's': self.__reverse,
             'a': self.__pivotleft,
-            'd': self.__pivotright
+            'd': self.__pivotright,
         }
 
     def __del__(self):
@@ -30,10 +30,10 @@ class wheel():
 
     def stop(self):
     # set all pins low
-        gpio.setup(31, False)
-        gpio.setup(33, False)
-        gpio.setup(35, False)
-        gpio.setup(37, False)
+        gpio.setup(self.pin_in1, False)
+        gpio.setup(self.pin_in2, False)
+        gpio.setup(self.pin_in3, False)
+        gpio.setup(self.pin_in4, False)
 
     def shutdown(self):
         self.stop()
@@ -106,6 +106,7 @@ class wheel():
     def read_user_input_then_move_acoordingly(self):
         key_press = input("Select driving mode: ")
         if key_press == 'q':
+            self.stop()
             return False
         elif key_press in self.__command_2_movement:
             self.__move(key_press)
@@ -118,6 +119,9 @@ class wheel():
 class wheelControlled(wheel):
     def __init__(self):
         super().__init__()
+        self.pin_left_encoder_pin = 7
+        self.pin_right_encoder_pin = 12
+
         self.__command_2_movement = {  # user input to drive wheel around
             'w': self.__forward,
             's': self.__reverse,
@@ -128,13 +132,10 @@ class wheelControlled(wheel):
             'distance': (0.0, 2.5),
             'angle': (0.0, 360.5)
         }
-        self.pin_left_encoder_pin = 7
-        self.pin_right_encoder_pin = 12
 
-    def _init_ouput_pins(self):
-        super(wheelControlled, self)._init_ouput_pins()
-        gpio.setup(self.pin_left_encoder_pin, gpio.IN, pull_up_down=gpio.PUD_UP)    # front left encoder pin
-        gpio.setup(self.pin_right_encoder_pin, gpio.IN, pull_up_down=gpio.PUD_UP)   # back right encoder pin
+        self.frequency = 50     # motor control frequency
+        self.duty_cycle = 50    # duty cycle to control motor effect voltage
+        self.encoder_ = encoder()
 
     def __move(self, direction='a', value=50):
         self._init_ouput_pins()
@@ -147,64 +148,63 @@ class wheelControlled(wheel):
 
     def stop(self):
         # set all pins low
-        gpio.setup(31, False)
-        gpio.setup(33, False)
-        gpio.setup(35, False)
-        gpio.setup(37, False)
+        super().stop()
 
-    def __forward(self, distance=0.5):
+    def __forward(self, distance=1):
         self._init_ouput_pins()
 
-        # left wheele
-        gpio.output(31, True)
-        gpio.output(33, False)
-        # right wheele
-        gpio.output(37, True)
-        gpio.output(35, False)
-        # hold on
-        time.sleep(distance)
+        # independent motor control via pwm, move forward with half speed
+        pwm_back_right = gpio.PWM(self.pin_in1, 50)
+        pwm_front_left = gpio.PWM(self.pin_in3, 50)
+        pwm_front_left.start(self.duty_cycle)
+        pwm_back_right.start(self.duty_cycle)
+        time.sleep(0.1)
+
+        if self.encoder_.reach('left', int(distance*960)):
+            pwm_front_left.stop()
+            pwm_back_right.stop()
         # send all pins low & cleanup
         self.stop()
         gpio.cleanup()
 
-    def __reverse(self, distance=0.5):
+    def __reverse(self, move_time=1):
         self._init_ouput_pins()
         # left wheele reverse
-        gpio.output(33, True)
-        gpio.output(31, False)
+        gpio.output(self.pin_in2, True)
+        gpio.output(self.pin_in1, False)
         # right wheele reverse
-        gpio.output(35, True)
-        gpio.output(37, False)
+        gpio.output(self.pin_in4, True)
+        gpio.output(self.pin_in3, False)
         # hold on
-        time.sleep(distance)
+        time.sleep(move_time)
         # send all pins low & cleanup
         self.stop()
         gpio.cleanup()
 
-    def __pivotleft(self, angle=30):
+    def __pivotleft(self, move_time=1):
         self._init_ouput_pins()
         # left wheele reverse
-        gpio.output(33, True)
-        gpio.output(31, False)
+        gpio.output(self.pin_in2, True)
+        gpio.output(self.pin_in1, False)
         # right wheele forward
-        gpio.output(37, True)
-        gpio.output(35, False)
+        gpio.output(self.pin_in3, True)
+        gpio.output(self.pin_in4, False)
         # hold on
-        time.sleep(angle)
+        time.sleep(move_time)
         # send all pins low & cleanup
         self.stop()
         gpio.cleanup()
 
-    def __pivotright(self, angle=30):
+    def __pivotright(self, move_time=1):
         self._init_ouput_pins()
         # left wheele forward
-        gpio.output(31, True)
-        gpio.output(33, False)
+        gpio.output(self.pin_in1, True)
+        gpio.output(self.pin_in2, False)
         # right wheele reverse
-        gpio.output(35, True)
-        gpio.output(37, False)
+        gpio.output(self.pin_in4, True)
+        gpio.output(self.pin_in3, False)
         # hold on
-        time.sleep(angle)
+        time.sleep(move_time)
         # send all pins low & cleanup
         self.stop()
         gpio.cleanup()
@@ -212,6 +212,7 @@ class wheelControlled(wheel):
     def read_user_input_then_move_acoordingly(self):
         key_press = input("Select driving mode: ")
         if key_press == 'q':
+            self.stop()
             return False
         elif key_press in self.__command_2_movement:
             value = int(input("enter value for this move: distance in cm, angle in degree"))
@@ -222,16 +223,21 @@ class wheelControlled(wheel):
             return True
 
 
-
-
-
 def main():
     driver = wheel()
-    print('driving start')
+    print('driving with time start')
     while True:
         if not driver.read_user_input_then_move_acoordingly():
             break
-    print('driving done')
+    print('driving with time done')
+    driver.__del__()
+
+    driver = wheelControlled()
+    print('driving with distance start')
+    while True:
+        if not driver.read_user_input_then_move_acoordingly():
+            break
+    print('driving with distance done')
 
 
 if __name__ == '__main__':

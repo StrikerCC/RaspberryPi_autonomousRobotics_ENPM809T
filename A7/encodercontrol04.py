@@ -50,21 +50,21 @@ def main():
     for i in range(0, 100000):
         
         print('counter back right', counter_back_right, 'counter front left', counter_front_left, "BR state: ", gpio.input(12), "FL state: ", gpio.input(7))
-        file_br.write(str(int(gpio.input(12))) + ' ' + str(counter_back_right)+' \n')
-        file_fl.write(str(int(gpio.input(7))) + ' ' + str(counter_front_left)+ ' \n')
+        file_br.write(str(int(gpio.input(12))) + ' ' + str(counter_back_right) +' \n')
+        file_fl.write(str(int(gpio.input(7))) + ' ' + str(counter_front_left) + ' \n')
         
         if int(gpio.input(12)) != int(button_back_right):
             button_back_right = int(gpio.input(12))
-            button_back_right += 1
+            counter_back_right += 1
         
         if int(gpio.input(7)) != int(button_front_left):
             button_front_left = int(gpio.input(7))
-            button_front_left += 1
+            counter_front_left += 1
 
-        if button_front_left >= 960:
+        if counter_front_left >= 960:
             pwm_front_left.stop()
         
-        if button_back_right >= 960:
+        if counter_back_right >= 960:
             pwm_back_right.stop()
 
         if button_front_left >= 960 and button_back_right >= 960:
