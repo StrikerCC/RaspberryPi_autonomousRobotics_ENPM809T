@@ -5,6 +5,8 @@ import time
 class encoder():
     def __init__(self):
         self.pin_left_encoder_pin, self.pin_right_encoder_pin = 7, 12
+
+    def __pins_init(self):
         gpio.setmode(gpio.BOARD)
         gpio.setup(self.pin_left_encoder_pin, gpio.IN, pull_up_down=gpio.PUD_UP)  # front left encoder pin
         gpio.setup(self.pin_right_encoder_pin, gpio.IN, pull_up_down=gpio.PUD_UP)  # back right encoder pin
@@ -13,6 +15,7 @@ class encoder():
         gpio.cleanup()
 
     def count(self, left_or_right):
+        self.__pins_init()
         if left_or_right not in ['left', 'right']:
             raise AttributeError('Wrong input given to encoder')
         pin = self.pin_left_encoder_pin if left_or_right == 'left' else self.pin_right_encoder_pin
@@ -32,6 +35,7 @@ class encoder():
                 break
 
     def reach(self, left_or_right, count_goal):
+        self.__pins_init()
         if left_or_right not in ['left', 'right']:
             raise AttributeError()
         pin = self.pin_left_encoder_pin if left_or_right == 'left' else self.pin_right_encoder_pin
@@ -40,7 +44,7 @@ class encoder():
         button = int(0)
         time.sleep(0.01)
 
-        for i in range(0, 1000000):
+        for i in range(0, 100000):
             if int(gpio.input(pin)) != int(button):
                 button = int(gpio.input(pin))
                 counter += 1
