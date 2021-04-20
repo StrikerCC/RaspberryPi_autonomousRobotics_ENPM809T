@@ -14,7 +14,7 @@ class encoder():
 
     def count(self, left_or_right):
         if left_or_right not in ['left', 'right']:
-            raise AttributeError()
+            raise AttributeError('Wrong input given to encoder')
         pin = self.pin_left_encoder_pin if left_or_right == 'left' else self.pin_right_encoder_pin
 
         counter = np.uint64(0)
@@ -22,7 +22,7 @@ class encoder():
         time.sleep(0.01)
 
         for i in range(0, 1000):
-            print('counter = ', counter, "GPIO state: ", gpio.input(12))
+            print('counter = ', counter, "GPIO state: ", gpio.input(pin))
             if int(gpio.input(pin)) != int(button):
                 button = int(gpio.input(pin))
                 counter += 1
@@ -50,6 +50,7 @@ class encoder():
                 return True
         return False
 
+
 if __name__ == '__main__':
     print('testing left encoder')
     encoder_ = encoder()
@@ -58,5 +59,5 @@ if __name__ == '__main__':
 
     print('testing right encoder')
     encoder_ = encoder()
-    encoder_.count('left')
+    encoder_.count('right')
     print('right encoder tested')
