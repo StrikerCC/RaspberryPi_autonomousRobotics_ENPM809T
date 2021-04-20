@@ -136,8 +136,9 @@ class wheelControlled(wheel):
         self.frequency = 50     # motor control frequency
         self.duty_cycle = 50    # duty cycle to control motor effect voltage
         self.encoder_ = encoder()
+        self.meter_2_ticks = 98 # number of ticks per meter of travelling 
 
-    def __move(self, direction='a', value=50.0):
+    def __move(self, direction='a', value=1.0):
         self._init_ouput_pins()
         print("Key: ", direction)
         key_press = direction
@@ -161,7 +162,7 @@ class wheelControlled(wheel):
         pwm_back_right.start(self.duty_cycle)
         time.sleep(0.01)
 
-        if self.encoder_.reach('left', int(distance*960)):
+        if self.encoder_.reach('left', int(distance*self.meter_2_ticks)):
             pwm_front_left.stop()
             pwm_back_right.stop()
         # send all pins low & cleanup

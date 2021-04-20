@@ -58,5 +58,5 @@ if __name__ == '__main__':
     print('left encoder tested')
 
     print('testing right encoder')
-    encoder_.count('right')
+    encoder_.count('left')
     print('right encoder tested')
