@@ -32,12 +32,12 @@ def main():
     
     for i in range(1, 100):
         gripper_.open(i)
-        recorder_.record(10, 'duty cycle' + str(i))
+        recorder_.loop_and_record(10, 'duty cycle' + str(i))
         
 
     for i in range(100, 1, -1):
         gripper_.open(i)
-        recorder_.record(10, 'duty cycle' + str(i))
+        recorder_.loop_and_record(10, 'duty cycle' + str(i))
 
 if __name__ == '__main__':
     main()

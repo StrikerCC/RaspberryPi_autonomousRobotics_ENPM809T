@@ -28,7 +28,7 @@ time.sleep(0.1)
 
 # keep looping
 for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=False):
-    start = datetime.now()  # count time 
+    start = datetime.now()  # count time
 
     # grab the current frame
     image = frame.array
