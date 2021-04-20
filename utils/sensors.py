@@ -50,7 +50,7 @@ class encoder():
                 return True
         return False
 
-if __name__ == '__name__':
+if __name__ == '__main__':
     print('testing left encoder')
     encoder_ = encoder()
     encoder_.count('left')
