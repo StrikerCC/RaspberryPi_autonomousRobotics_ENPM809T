@@ -19,7 +19,7 @@ class encoder():
 
         counter = np.uint64(0)
         button = int(0)
-        time.sleep(0.1)
+        time.sleep(0.01)
 
         for i in range(0, 1000):
             print('counter = ', counter, "GPIO state: ", gpio.input(12))
@@ -27,25 +27,26 @@ class encoder():
                 button = int(gpio.input(pin))
                 counter += 1
             print('encoder count to ', counter)
-            if counter >= 960:
+            if counter >= 50:
                 print("endcoder count finished")
                 break
 
-    def reach(self, left_or_right, count):
+    def reach(self, left_or_right, count_goal):
         if left_or_right not in ['left', 'right']:
             raise AttributeError()
         pin = self.pin_left_encoder_pin if left_or_right == 'left' else self.pin_right_encoder_pin
 
         counter = np.uint64(0)
         button = int(0)
-        time.sleep(0.1)
+        time.sleep(0.01)
 
         for i in range(0, 1000):
             if int(gpio.input(pin)) != int(button):
                 button = int(gpio.input(pin))
                 counter += 1
             print('encoder count to ', counter)
-            if counter >= count:
+            if counter >= count_goal:
+                print('reach the goal count')
                 return True
         return False
 

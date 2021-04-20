@@ -142,7 +142,8 @@ class wheelControlled(wheel):
         print("Key: ", direction)
         key_press = direction
         if key_press in self.__command_2_movement.keys():
-            self.__command_2_movement[key_press]()  # only move for one second
+            func_move = self.__command_2_movement[key_press]  # only move for one second
+            func_move(int(value))
         else:
             print("Invalid key presses!")
 
@@ -158,7 +159,7 @@ class wheelControlled(wheel):
         pwm_front_left = gpio.PWM(self.pin_in3, 50)
         pwm_front_left.start(self.duty_cycle)
         pwm_back_right.start(self.duty_cycle)
-        time.sleep(0.1)
+        time.sleep(0.01)
 
         if self.encoder_.reach('left', int(distance*960)):
             pwm_front_left.stop()
@@ -167,7 +168,7 @@ class wheelControlled(wheel):
         self.stop()
         gpio.cleanup()
 
-    def __reverse(self, move_time=1):
+    def __reverse(self, distance=1):
         self._init_ouput_pins()
         # left wheele reverse
         gpio.output(self.pin_in2, True)
@@ -176,12 +177,12 @@ class wheelControlled(wheel):
         gpio.output(self.pin_in4, True)
         gpio.output(self.pin_in3, False)
         # hold on
-        time.sleep(move_time)
+        time.sleep(distance)
         # send all pins low & cleanup
         self.stop()
         gpio.cleanup()
 
-    def __pivotleft(self, move_time=1):
+    def __pivotleft(self, distance=1):
         self._init_ouput_pins()
         # left wheele reverse
         gpio.output(self.pin_in2, True)
@@ -190,12 +191,12 @@ class wheelControlled(wheel):
         gpio.output(self.pin_in3, True)
         gpio.output(self.pin_in4, False)
         # hold on
-        time.sleep(move_time)
+        time.sleep(distance)
         # send all pins low & cleanup
         self.stop()
         gpio.cleanup()
 
-    def __pivotright(self, move_time=1):
+    def __pivotright(self, distance=1):
         self._init_ouput_pins()
         # left wheele forward
         gpio.output(self.pin_in1, True)
@@ -204,7 +205,7 @@ class wheelControlled(wheel):
         gpio.output(self.pin_in4, True)
         gpio.output(self.pin_in3, False)
         # hold on
-        time.sleep(move_time)
+        time.sleep(distance)
         # send all pins low & cleanup
         self.stop()
         gpio.cleanup()
@@ -213,9 +214,9 @@ class wheelControlled(wheel):
         key_press = input("Select driving mode: ")
         if key_press == 'q':
             return False
-        elif key_press in self.__command_2_movement:
+        elif key_press in self.__command_2_movement.keys():
             value = int(input("enter value for this move: distance in cm, angle in degree"))
-            self.__move(key_press, value)
+            self.__move(direction=key_press, value=value)
             return True
         else:
             print('couldn\'t recognize ', key_press, ' please enter ', str(self.__command_2_movement))
