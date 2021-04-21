@@ -9,6 +9,7 @@ while True:
         count += 1
 
         # Read serial stream
+        line = ser.readline()
 
         # avoid first n-line of serial information
         if count > 10:

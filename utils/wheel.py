@@ -156,8 +156,8 @@ class wheelControlled(wheel):
         self._init_ouput_pins()
 
         # independent motor control via pwm, move forward with half speed
-        pwm_back_right = gpio.PWM(self.pin_in1, 50)
-        pwm_front_left = gpio.PWM(self.pin_in3, 50)
+        pwm_front_left = gpio.PWM(self.pin_in1, 50)
+        pwm_back_right = gpio.PWM(self.pin_in3, 50)
         pwm_front_left.start(self.duty_cycle)
         pwm_back_right.start(self.duty_cycle)
         time.sleep(0.01)
@@ -171,14 +171,17 @@ class wheelControlled(wheel):
 
     def __reverse(self, distance=1.0):
         self._init_ouput_pins()
-        # left wheele reverse
-        gpio.output(self.pin_in2, True)
-        gpio.output(self.pin_in1, False)
-        # right wheele reverse
-        gpio.output(self.pin_in4, True)
-        gpio.output(self.pin_in3, False)
-        # hold on
-        time.sleep(distance)
+
+        # independent motor control via pwm, move forward with half speed
+        pwm_front_left = gpio.PWM(self.pin_in2, 50)
+        pwm_back_right = gpio.PWM(self.pin_in4, 50)
+        pwm_front_left.start(self.duty_cycle)
+        pwm_back_right.start(self.duty_cycle)
+        time.sleep(0.01)
+
+        if self.encoder_.reach('left', int(distance*self.meter_2_ticks)):
+            pwm_front_left.stop()
+            pwm_back_right.stop()
         # send all pins low & cleanup
         self.stop()
         gpio.cleanup()
