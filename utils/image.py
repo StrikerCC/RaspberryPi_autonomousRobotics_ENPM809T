@@ -49,28 +49,32 @@ def find_ROI(img, limits):
     mask = color_mask(img, limits)
 
     # dilate the mask
-    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (7, 7))
     mask = cv2.dilate(mask, kernel)
     cv2.imshow('dilated', mask)
     cv2.waitKey(0)
 
     # get contours
     contours, hierarchy = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-
+    contour_biggest, area_biggest = contours[0], cv2.contourArea(contours[0])
     # biggest contour
-    contour = contours[0]
-    cv2.drawContours(img, [contour], -1, (0, 0, 255), 3)
+    for contour in contours:
+        area = cv2.contourArea(contour)
+        if area > area_biggest:
+            contour_biggest = contour
+            area_biggest = area
+
+    cv2.drawContours(img, [contour_biggest], -1, (0, 0, 255), 3)
     cv2.imshow('tracking', img)
     cv2.waitKey(0)
     
-    M = cv2.moments(contour)
+    M = cv2.moments(contour_biggest)
     cX = int(M['m10'] / M['m00'])
     cY = int(M['m01'] / M['m00'])
-    area = cv2.contourArea(contour)
 
     cv2.circle(mask, (cX, cY), 7, (255, 255, 255), -1)
     # show the image
     cv2.imshow('image', mask)
     cv2.waitKey(0)
 
-    return (cX, cY), area
+    return (cX, cY), area_biggest
