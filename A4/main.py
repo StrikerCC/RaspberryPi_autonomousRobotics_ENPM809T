@@ -12,7 +12,7 @@ from datetime import datetime
 
 # initialize the Raspberry Pi camera
 camera = PiCamera()
-camera.resolution = (640, 480)
+camera.__resolution = (640, 480)
 camera.framerate = 25
 rawCapture = PiRGBArray(camera, size=(640,480))
 # define the codec and create VideoWriter object

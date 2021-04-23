@@ -112,8 +112,11 @@ class imu():
         # setup serial stream of extra chars
         line = line.rstrip().lstrip()
         line = str(line)
+        line = line.strip(' ')
         line = line.strip(',')
         line = line.strip("b'")
+        line = line.strip('X:')
+        line = line.strip(' ')
         print(line)
         # return float
         return float(line)

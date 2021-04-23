@@ -1,21 +1,22 @@
 import RPi.GPIO as gpio
 import time
-from sensors import encoder
+from sensors import encoder, imu
+
 
 class wheel():
     def __init__(self):
         # self.dis_move = 0
-        self.pin_upper_left_h_bridge = 31
-        self.pin_in1 = 31
-        self.pin_in2 = 33
-        self.pin_in4 = 35
-        self.pin_in3 = 37
+        self.__pin_upper_left_h_bridge = 31
+        self.__pin_in1 = 31
+        self.__pin_in2 = 33
+        self.__pin_in4 = 35
+        self.__pin_in3 = 37
 
         self.__command_2_movement = {    # user input to drive wheel around
-            'w': self.__forward,
-            's': self.__reverse,
-            'a': self.__pivotleft,
-            'd': self.__pivotright,
+            'w': self.forward,
+            's': self.reverse,
+            'a': self.pivotleft,
+            'd': self.pivotright,
         }
 
     def __del__(self):
@@ -24,79 +25,79 @@ class wheel():
 
     def _init_ouput_pins(self):
         gpio.setmode(gpio.BOARD)
-        gpio.setup(self.pin_in2, gpio.OUT)    # IN1
-        gpio.setup(self.pin_in1, gpio.OUT)    # IN2
-        gpio.setup(self.pin_in4, gpio.OUT)    # IN3
-        gpio.setup(self.pin_in3, gpio.OUT)    # IN4
+        gpio.setup(self.__pin_in2, gpio.OUT)    # IN1
+        gpio.setup(self.__pin_in1, gpio.OUT)    # IN2
+        gpio.setup(self.__pin_in4, gpio.OUT)    # IN3
+        gpio.setup(self.__pin_in3, gpio.OUT)    # IN4
 
     def stop(self):
     # set all pins low
-        gpio.setup(self.pin_in1, False)
-        gpio.setup(self.pin_in2, False)
-        gpio.setup(self.pin_in3, False)
-        gpio.setup(self.pin_in4, False)
+        gpio.setup(self.__pin_in1, False)
+        gpio.setup(self.__pin_in2, False)
+        gpio.setup(self.__pin_in3, False)
+        gpio.setup(self.__pin_in4, False)
 
     def shutdown(self):
         self.stop()
         gpio.cleanup()
 
-    def __forward(self, move_time=1):
+    def forward(self, move_time=1):
         self._init_ouput_pins()
         # left wheele
-        gpio.output(self.pin_in1, True)
-        gpio.output(self.pin_in2, False)
+        gpio.output(self.__pin_in1, True)
+        gpio.output(self.__pin_in2, False)
         # right wheele
-        gpio.output(self.pin_in3, True)
-        gpio.output(self.pin_in4, False)
+        gpio.output(self.__pin_in3, True)
+        gpio.output(self.__pin_in4, False)
         # hold on
         time.sleep(move_time)
         # send all pins low & cleanup
         self.stop()
         gpio.cleanup()
 
-    def __reverse(self, move_time=1):
+    def reverse(self, move_time=1):
         self._init_ouput_pins()
         # left wheele reverse
-        gpio.output(self.pin_in2, True)
-        gpio.output(self.pin_in1, False)
+        gpio.output(self.__pin_in2, True)
+        gpio.output(self.__pin_in1, False)
         # right wheele reverse
-        gpio.output(self.pin_in4, True)
-        gpio.output(self.pin_in3, False)
+        gpio.output(self.__pin_in4, True)
+        gpio.output(self.__pin_in3, False)
         # hold on
         time.sleep(move_time)
         # send all pins low & cleanup
         self.stop()
         gpio.cleanup()
 
-    def __pivotleft(self, move_time=1):
+    def pivotleft(self, move_time=1):
         self._init_ouput_pins()
         # left wheele reverse
-        gpio.output(self.pin_in2, True)
-        gpio.output(self.pin_in1, False)
+        gpio.output(self.__pin_in2, True)
+        gpio.output(self.__pin_in1, False)
         # right wheele forward
-        gpio.output(self.pin_in3, True)
-        gpio.output(self.pin_in4, False)
+        gpio.output(self.__pin_in3, True)
+        gpio.output(self.__pin_in4, False)
         # hold on
         time.sleep(move_time)
         # send all pins low & cleanup
         self.stop()
         gpio.cleanup()
 
-    def __pivotright(self, move_time=1):
+    def pivotright(self, move_time=1):
         self._init_ouput_pins()
         # left wheele forward
-        gpio.output(self.pin_in1, True)
-        gpio.output(self.pin_in2, False)
+        gpio.output(self.__pin_in1, True)
+        gpio.output(self.__pin_in2, False)
         # right wheele reverse
-        gpio.output(self.pin_in4, True)
-        gpio.output(self.pin_in3, False)
+        gpio.output(self.__pin_in4, True)
+        gpio.output(self.__pin_in3, False)
         # hold on
         time.sleep(move_time)
         # send all pins low & cleanup
         self.stop()
         gpio.cleanup()
 
-    def __move(self, direction):
+    def __moveIt(self, direction):
         print("Key: ", direction)
         key_press = direction
         if key_press in self.__command_2_movement.keys():
@@ -109,7 +110,7 @@ class wheel():
         if key_press == 'q':
             return False
         elif key_press in self.__command_2_movement:
-            self.__move(key_press)
+            self.__moveIt(key_press)
             return True
         else:
             print('couldn\'t recognize ', key_press, ' please enter ', str(self.__command_2_movement))
@@ -119,26 +120,31 @@ class wheel():
 class wheelControlled(wheel):
     def __init__(self):
         super().__init__()
-        self.pin_left_encoder_pin = 7
-        self.pin_right_encoder_pin = 12
+        self.__pin_left_encoder_pin = 7
+        self.__pin_right_encoder_pin = 12
 
         self.__command_2_movement = {  # user input to drive wheel around
-            'w': self.__forward,
-            's': self.__reverse,
-            'a': self.__pivotleft,
-            'd': self.__pivotright
+            'w': self.forward,
+            's': self.reverse,
+            'a': self.pivotleft,
+            'd': self.pivotright
         }
         self.limit = {  # limit of distance and angle user can input each prompt
             'distance': (0.0, 2.5),
             'angle': (0.0, 360.5)
         }
 
+        """sensors"""
+        self.encoder_ = encoder()
+        self.imu_ = imu()
+
+        """motor control parameters"""
         self.frequency = 50     # motor control frequency
         self.duty_cycle = 50    # duty cycle to control motor effect voltage
-        self.encoder_ = encoder()
+
         self.meter_2_ticks = 98 # number of ticks per meter of travelling 
 
-    def __move(self, direction='a', value=1.0):
+    def __moveIt(self, direction='a', value=1.0):
         self._init_ouput_pins()
         print("Key: ", direction)
         key_press = direction
@@ -152,12 +158,12 @@ class wheelControlled(wheel):
         # set all pins low
         super().stop()
 
-    def __forward(self, distance=1.0):
+    def forward(self, distance=1.0):
         self._init_ouput_pins()
 
         # independent motor control via pwm, move forward with half speed
-        pwm_front_left = gpio.PWM(self.pin_in1, 50)
-        pwm_back_right = gpio.PWM(self.pin_in3, 50)
+        pwm_front_left = gpio.PWM(self.__pin_in1, 50)
+        pwm_back_right = gpio.PWM(self.__pin_in3, 50)
         pwm_front_left.start(self.duty_cycle)
         pwm_back_right.start(self.duty_cycle)
         time.sleep(0.01)
@@ -169,12 +175,12 @@ class wheelControlled(wheel):
         self.stop()
         gpio.cleanup()
 
-    def __reverse(self, distance=1.0):
+    def reverse(self, distance=1.0):
         self._init_ouput_pins()
 
         # independent motor control via pwm, move forward with half speed
-        pwm_front_left = gpio.PWM(self.pin_in2, 50)
-        pwm_back_right = gpio.PWM(self.pin_in4, 50)
+        pwm_front_left = gpio.PWM(self.__pin_in2, 50)
+        pwm_back_right = gpio.PWM(self.__pin_in4, 50)
         pwm_front_left.start(self.duty_cycle)
         pwm_back_right.start(self.duty_cycle)
         time.sleep(0.01)
@@ -186,30 +192,41 @@ class wheelControlled(wheel):
         self.stop()
         gpio.cleanup()
 
-    def __pivotleft(self, distance=1.0):
+    def pivotleft(self, angle=30.0):
         self._init_ouput_pins()
-        # left wheele reverse
-        gpio.output(self.pin_in2, True)
-        gpio.output(self.pin_in1, False)
-        # right wheele forward
-        gpio.output(self.pin_in3, True)
-        gpio.output(self.pin_in4, False)
-        # hold on
-        time.sleep(distance)
+        angle_init = self.imu_.angle()
+        angle_goal = angle_init + angle
+
+        # independent motor control via pwm, move forward with half speed
+        pwm_front_left = gpio.PWM(self.__pin_in2, 50)
+        pwm_back_right = gpio.PWM(self.__pin_in4, 50)
+        pwm_front_left.start(self.duty_cycle)
+        pwm_back_right.start(self.duty_cycle)
+        time.sleep(0.01)
+
+        if self.imu_.angle() >= angle_goal:
+            pwm_front_left.stop()
+            pwm_back_right.stop()
         # send all pins low & cleanup
         self.stop()
         gpio.cleanup()
 
-    def __pivotright(self, distance=1.0):
+
+    def pivotright(self, angle=30.0):
         self._init_ouput_pins()
-        # left wheele forward
-        gpio.output(self.pin_in1, True)
-        gpio.output(self.pin_in2, False)
-        # right wheele reverse
-        gpio.output(self.pin_in4, True)
-        gpio.output(self.pin_in3, False)
-        # hold on
-        time.sleep(distance)
+        angle_init = self.imu_.angle()
+        angle_goal = angle_init - angle
+
+        # independent motor control via pwm, move forward with half speed
+        pwm_front_left = gpio.PWM(self.__pin_in2, 50)
+        pwm_back_right = gpio.PWM(self.__pin_in4, 50)
+        pwm_front_left.start(self.duty_cycle)
+        pwm_back_right.start(self.duty_cycle)
+        time.sleep(0.01)
+
+        if self.imu_.angle() <= angle_goal:
+            pwm_front_left.stop()
+            pwm_back_right.stop()
         # send all pins low & cleanup
         self.stop()
         gpio.cleanup()
@@ -220,7 +237,7 @@ class wheelControlled(wheel):
             return False
         elif key_press in self.__command_2_movement.keys():
             value = float(input("enter value for this move: distance in cm, angle in degree"))
-            self.__move(direction=key_press, value=value)
+            self.__moveIt(direction=key_press, value=value)
             return True
         else:
             print('couldn\'t recognize ', key_press, ' please enter ', str(self.__command_2_movement))

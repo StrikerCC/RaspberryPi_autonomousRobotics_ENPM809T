@@ -3,15 +3,19 @@ from picamera.array import PiRGBArray
 from picamera import PiCamera
 import time
 import cv2 
+import numpy as np
 
-
-class camera():
+class camera_pi():
     def __init__(self):
         # initialize the Raspberry Pi camera
-        self.camera = PiCamera()
-        self.camera.resolution = (640, 480)
-        self.camera.framerate = 25
-        self.rawCapture = PiRGBArray(camera, size=(640,480))
+        self.__camera = PiCamera()
+        self.__resolution = (640, 480)
+        self.__fov = (38.88, 38.88)               # full field of view in degree
+        self.pixel_to_angle = float(self.__fov[0]) / float(self.__resolution[0])
+
+        self.__camera.resolution = self.__resolution    # resolution
+        self.__camera.framerate = 25                  # frame rate
+        self.rawCapture = PiRGBArray(camera_pi, size=(640, 480))
         # define the codec and create VideoWriter object
 
         # allow the camera to warmup
@@ -19,7 +23,7 @@ class camera():
 
     def view_one_frame(self):
         # grab the first frame
-        frame = self.camera.capture_continuous(self.rawCapture, format="bgr", use_video_port=False)[0]
+        frame = self.__camera.capture_continuous(self.rawCapture, format="bgr", use_video_port=False)[0]
         image = frame.array
         image = cv2.flip(image, 0)
         # clear the stream in preparation for the next frame
@@ -29,7 +33,7 @@ class camera():
     def view_some_frames(self, num_frames=5, text=None):
         # keep looping for some frames
         i = 0
-        for frame in self.camera.capture_continuous(self.rawCapture, format="bgr", use_video_port=False):
+        for frame in self.__camera.capture_continuous(self.rawCapture, format="bgr", use_video_port=False):
             i += 1
             # grab the current frame
             image = frame.array
@@ -53,7 +57,7 @@ class camera():
 
     def loop_until_shut(self, path, text):
         # keep looping
-        for frame in self.camera.capture_continuous(self.rawCapture, format="bgr", use_video_port=False):
+        for frame in self.__camera.capture_continuous(self.rawCapture, format="bgr", use_video_port=False):
             # grab the current frame
             image = frame.array
             image = cv2.flip(image, 0)
@@ -82,7 +86,7 @@ class camera():
         time.sleep(0.5)
 
         # keep looping
-        for frame in self.camera.capture_continuous(self.rawCapture, format="bgr", use_video_port=False):
+        for frame in self.__camera.capture_continuous(self.rawCapture, format="bgr", use_video_port=False):
             # grab the current frame
             image = frame.array
             image = cv2.flip(image, 0)
@@ -107,14 +111,32 @@ class camera():
         out.release()
         cv2.destroyAllWindows()
 
+    def coord_img_to_pose(self, coord_img):
+        """
+        calculate the pose of a object according to it's image coordinates
+        :param num_pixel: pixel coordinates of object of interesting
+        :type num_pixel: tuple or np.array
+        :return: object pose
+        :rtype: numpy array
+        """
+        # angle = np.zeros((2,))
+        """calculate the angle from center line to the pixel"""
+        coord_img = coord_img - (np.array(self.__resolution) / 2)
+        angle = coord_img * self.pixel_to_angle
+        assert 0.0 <= angle <= 360.0
+        return angle
+
+    def fov(self):
+        return self.__fov
+
    
 class recorder():
     def __init__(self, path):
         # initialize the Raspberry Pi camera
         self.camera = PiCamera()
-        self.camera.resolution = (640, 480)
+        self.camera.__resolution = (640, 480)
         self.camera.framerate = 25
-        self.rawCapture = PiRGBArray(camera, size=(640,480))
+        self.rawCapture = PiRGBArray(camera_pi, size=(640, 480))
 
         # define the codec and create VideoWriter object
         fourcc = cv2.VideoWriter_fourcc(*'XVID')

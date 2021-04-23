@@ -11,7 +11,7 @@
 
 # import lib
 from utils.wheel import wheel
-from utils.camera import camera, recorder
+from utils.camera_pi import camera_pi, recorder
 from utils.ranger import sonar
 from utils.gripper import gripper
 
@@ -24,7 +24,7 @@ def main():
 
     """operation classes"""
     wheel_ = wheel()    # dynamic units
-    camera_ = camera()  # perception units
+    camera_ = camera_pi()  # perception units
 
 
     """go live"""

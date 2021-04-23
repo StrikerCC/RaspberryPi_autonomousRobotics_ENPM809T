@@ -12,7 +12,7 @@ from datetime import datetime
 
 # initialize the Raspberry Pi camera
 camera = PiCamera()
-camera.resolution = (640, 480)
+camera.__resolution = (640, 480)
 camera.framerate = 25
 rawCapture = PiRGBArray(camera, size=(640,480))
 # define the codec and create VideoWriter object
@@ -35,7 +35,7 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
     image = cv2.flip(image, 0)
 
     ### draw contour on the green light 
-    image = tracker.showTracking(image)
+    image = tracker.show_tracking(image)
 
     # show the frame to our screen
     cv2.imshow("Frame", image)

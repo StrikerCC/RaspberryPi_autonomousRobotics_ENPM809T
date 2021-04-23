@@ -6,7 +6,7 @@ for path in sys.path:
     print(path)
 
 from utils.gripper import gripper
-from utils.camera import recorder
+from utils.camera_pi import recorder
 import time 
 
 def main():
