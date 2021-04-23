@@ -197,8 +197,9 @@ class wheelControlled(wheel):
     def pivotleft(self, angle=30.0):
         self._init_ouput_pins()
         angle_init = self.imu_.angle()
-        angle_goal = angle_init - angle
-        print(angle_init, 'to', angle_goal)
+        angle_goal_left = ((angle_init - angle - self._tolerance) + 360.0) % 360.0  # left limit
+        angle_goal_right = ((angle_init - angle + self._tolerance) + 360.0) % 360.0 # right limit
+        print(angle_init, 'to range', angle_goal_left, angle_goal_right)
 
         # independent motor control via pwm, move forward with half speed
         pwm_front_left = gpio.PWM(self._pin_in2, 50)
@@ -208,10 +209,8 @@ class wheelControlled(wheel):
         time.sleep(0.01)
 
         for _ in range(100):
-            print(360.0 - angle_goal - self._tolerance, '<', self.imu_.angle(), '<',
-                  360.0 - angle_goal + self._tolerance)
-            if 360.0 - angle_goal - self._tolerance <= self.imu_.angle() <= 360.0 - angle_goal + self._tolerance:
-                print(angle_init, 'to', angle_goal)
+            print(angle_goal_left, self.imu_.angle(), angle_goal_right)
+            if angle_goal_left <= self.imu_.angle() <= angle_goal_right:
                 print('reach', self.imu_.angle())
                 pwm_front_left.stop()
                 pwm_back_right.stop()
@@ -223,7 +222,7 @@ class wheelControlled(wheel):
 
     def pivotright(self, angle=30.0):
         self._init_ouput_pins()
-        angle_init = 0.0 #self.imu_.angle()
+        angle_init = self.imu_.angle()
         angle_goal = angle_init + angle
         print(angle_init, 'to', angle_goal)
 
