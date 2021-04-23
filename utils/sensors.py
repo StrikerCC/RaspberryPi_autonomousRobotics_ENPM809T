@@ -126,7 +126,7 @@ class imu():
         line = line.strip("b'")
         line = line.strip('X:')
         #line = line.strip(' ')
-        print(line)
+        # print(line)
         # return float
         try:
             line = float(line)

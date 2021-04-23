@@ -208,7 +208,9 @@ class wheelControlled(wheel):
         time.sleep(0.01)
 
         for _ in range(100):
-            if angle_goal - self._tolerance < self.imu_.angle() < angle_goal + self._tolerance:
+            print(360.0 - angle_goal - self._tolerance, 'in', self.imu_.angle(), 'in',
+                  360.0 - angle_goal + self._tolerance)
+            if 360.0 - angle_goal - self._tolerance <= self.imu_.angle() <= 360.0 - angle_goal + self._tolerance:
                 print(angle_init, 'to', angle_goal)
                 print('reach', self.imu_.angle())
                 pwm_front_left.stop()
@@ -221,7 +223,7 @@ class wheelControlled(wheel):
 
     def pivotright(self, angle=30.0):
         self._init_ouput_pins()
-        angle_init = self.imu_.angle()
+        angle_init = 0.0 #self.imu_.angle()
         angle_goal = angle_init + angle
         print(angle_init, 'to', angle_goal)
 
@@ -233,8 +235,8 @@ class wheelControlled(wheel):
         time.sleep(0.01)
 
         for _ in range(100):
-            print(360.0 - angle_goal - self._tolerance, 'in', self.imu_.angle(), 'in', 360.0 - angle_goal + self._tolerance)
-            if 360.0 - angle_goal - self._tolerance <= self.imu_.angle() <= 360.0 - angle_goal + self._tolerance:
+            print(angle_goal - self._tolerance, '<', self.imu_.angle() < angle_goal, '<', self._tolerance)
+            if angle_goal - self._tolerance < self.imu_.angle() < angle_goal + self._tolerance:
                 print(angle_init, 'to', angle_goal)
                 print('reach', self.imu_.angle())
                 pwm_front_left.stop()
