@@ -138,11 +138,13 @@ class wheelControlled(wheel):
         self.encoder_ = encoder()
         self.imu_ = imu()
 
-        """motor control parameters"""
+        """motor control parameters for motor"""
         self.frequency = 50     # motor control frequency
-        self.duty_cycle = 50    # duty cycle to control motor effect voltage
-
-        self.meter_2_ticks = 98 # number of ticks per meter of travelling 
+        self.duty_cycle = 80    # duty cycle to control motor effect voltage
+        """motor control parameters for encoder"""
+        self.meter_2_ticks = 98 # number of ticks per meter of travelling
+        """motor control parameters for imu"""
+        self._tolerance = 2
 
     def __moveIt(self, direction='a', value=1.0):
         self._init_ouput_pins()
@@ -199,14 +201,14 @@ class wheelControlled(wheel):
         print(angle_init, 'to', angle_goal)
 
         # independent motor control via pwm, move forward with half speed
-        pwm_front_left = gpio.PWM(self._pin_in2, 50)
+        pwm_front_left = gpio.PWM(self._pin_in1, 50)
         pwm_back_right = gpio.PWM(self._pin_in4, 50)
         pwm_front_left.start(self.duty_cycle)
         pwm_back_right.start(self.duty_cycle)
         time.sleep(0.01)
 
         for _ in range(1000):
-            if 360.0 - angle_goal - 0.5 <= self.imu_.angle() <= 360.0 - angle_goal + 0.5:
+            if 360.0 - angle_goal - self._tolerance <= self.imu_.angle() <= 360.0 - angle_goal + self._tolerance:
                 print(angle_init, 'to', angle_goal)
                 print('reach', self.imu_.angle())
                 pwm_front_left.stop()
@@ -224,13 +226,13 @@ class wheelControlled(wheel):
 
         # independent motor control via pwm, move forward with half speed
         pwm_front_left = gpio.PWM(self._pin_in2, 50)
-        pwm_back_right = gpio.PWM(self._pin_in4, 50)
+        pwm_back_right = gpio.PWM(self._pin_in3, 50)
         pwm_front_left.start(self.duty_cycle)
         pwm_back_right.start(self.duty_cycle)
         time.sleep(0.01)
 
         for _ in range(1000):
-            if angle_goal-0.5 < self.imu_.angle() < angle_goal-0.5:
+            if angle_goal-self._tolerance < self.imu_.angle() < angle_goal-self._tolerance:
                 print(angle_init, 'to', angle_goal)
                 print('reach', self.imu_.angle())
                 pwm_front_left.stop()
