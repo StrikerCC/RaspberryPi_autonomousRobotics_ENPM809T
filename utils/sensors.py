@@ -62,14 +62,19 @@ class imu():
         # Indentify serial connection
         self.port = '/dev/ttyUSB0'
         self.ser = serial.Serial(self.port, 9600)
-        time.sleep(0.5)
-
+        
+        print('waiting for imu to respound')
+        while True:
+            if self.ser.in_waiting > 0:
+                print('imu ok', self.ser.readline())
+                break
+       
     def __init__serial(self):
         self.ser = serial.Serial(self.port, 9600)
 
     def angles(self):
         angle = 0.0
-        for i in range(10000):
+        for i in range(100):
             count = 0
             if self.ser.in_waiting > 0:
                 count += 1
@@ -80,21 +85,25 @@ class imu():
                 if count > 5:
                     angle = self.__line_to_angle(line)
                 print(angle)
+            else:
+                print('cannot listen to imu')
+                
         return angle
 
     def angle(self):
-        if self.ser.in_waiting > 0:
-            # Read serial stream
-            line = self.ser.readline()
-            angle = self.__line_to_angle(line)
-            return angle
-        else:
-            print('cannot listen to imu')
-            return None
+        while True:
+            if self.ser.in_waiting > 0:
+                angle = 0.0
+                for _ in range(5):
+                    # Read serial stream
+                    line = self.ser.readline()
+                    angle = self.__line_to_angle(line)
+                return angle
+
 
     def reach(self, angle_goal):
         # ser = serial.Serial(self.port, 9600)
-        for i in range(100000):
+        for i in range(10000000):
             count = 0
             if self.ser.in_waiting > 0:
                 count += 1
@@ -112,15 +121,18 @@ class imu():
         # setup serial stream of extra chars
         line = line.rstrip().lstrip()
         line = str(line)
-        line = line.strip(' ')
+        #line = line.strip(' ')
         line = line.strip(',')
         line = line.strip("b'")
         line = line.strip('X:')
-        line = line.strip(' ')
-        print(line)
+        #line = line.strip(' ')
+        print(line)        
         # return float
-        return float(line)
-
+        try:
+            line = float(line)
+        except:
+            print('cannot convert', line, 'to float')
+        return line
 
 if __name__ == '__main__':
     print('testing left encoder')
@@ -133,8 +145,9 @@ if __name__ == '__main__':
     print('right encoder tested')
 
     imu_ = imu()
+    #imu_.angles()
     print('testing imu')
-    for _ in range(2000):
+    for _ in range(20):
         print(imu_.angle())
     print('imu tested')
 
