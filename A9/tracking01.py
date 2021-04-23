@@ -13,10 +13,10 @@
 import numpy as np
 import cv2
 
-from utils.camera_pi import camera_pi
-from utils.wheel import wheelControlled
+from ..utils.camera_pi import camera_pi
+from ..utils.wheel import wheelControlled
 
-from utils.image import find_ROI
+from ..utils.image import find_ROI
 
 def keep_tracking(camera_, color_limit_object):
     frames_out = 10000

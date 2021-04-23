@@ -1,6 +1,6 @@
 import RPi.GPIO as gpio
 import time
-from sensors import encoder, imu
+from utils.sensors import encoder, imu
 
 
 class wheel():
