@@ -17,7 +17,7 @@ class camera():
         # allow the camera to warmup
         time.sleep(0.1)
 
-    def shut(self, path, text):
+    def shut(self, path, text=None):
         
         # keep looping
         for frame in self.camera.capture_continuous(self.rawCapture, format="bgr", use_video_port=False):
@@ -34,7 +34,7 @@ class camera():
             # press the 'q' key to stop the video stream
             key = cv2.waitKey(10) & 0xFF
             if key == ord("q"):
-                cv2.putText(image, text, (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 3)
+                if text: cv2.putText(image, text, (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 3)
                 cv2.imwrite(path, image)
                 break
         cv2.destroyAllWindows()
@@ -48,7 +48,7 @@ def main():
 
     print('take a picture from pi camera, and store the image at ', img_path)
 
-    camera_.shut(img_path, 'testing')
+    camera_.shut(img_path)
 
 if __name__ == '__main__':
     main()
