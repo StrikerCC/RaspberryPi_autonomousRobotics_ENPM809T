@@ -63,8 +63,8 @@ def rotate(wheel, angle):
 
 def main():
     """object color info"""
-    low_h, low_s, low_v = (39, 113, 67)
-    high_h, high_s, high_v = (87, 255, 91)
+    low_h, low_s, low_v = (0, 174, 50)
+    high_h, high_s, high_v = (12, 255, 189)
     object_color = {    ### hsv filter for object
         'low_limit': (low_h, low_s, low_v),
         'up_limit': (high_h, high_s, high_v)
@@ -77,6 +77,8 @@ def main():
     while True:
         if input('continue? y?') == 'y':
             angle = keep_tracking(camera_, object_color)
+            print('find object at', angle, 'degree')
+
             assert angle < camera_.fov()
             rotate(wheel_, angle)
         else:
