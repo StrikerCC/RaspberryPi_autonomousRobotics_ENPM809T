@@ -7,12 +7,12 @@ class wheel():
     def __init__(self):
         # self.dis_move = 0
         self.__pin_upper_left_h_bridge = 31
-        self.__pin_in1 = 31
-        self.__pin_in2 = 33
-        self.__pin_in4 = 35
-        self.__pin_in3 = 37
+        self._pin_in1 = 31
+        self._pin_in2 = 33
+        self._pin_in4 = 35
+        self._pin_in3 = 37
 
-        self.__command_2_movement = {    # user input to drive wheel around
+        self._command_2_movement = {    # user input to drive wheel around
             'w': self.forward,
             's': self.reverse,
             'a': self.pivotleft,
@@ -25,17 +25,17 @@ class wheel():
 
     def _init_ouput_pins(self):
         gpio.setmode(gpio.BOARD)
-        gpio.setup(self.__pin_in2, gpio.OUT)    # IN1
-        gpio.setup(self.__pin_in1, gpio.OUT)    # IN2
-        gpio.setup(self.__pin_in4, gpio.OUT)    # IN3
-        gpio.setup(self.__pin_in3, gpio.OUT)    # IN4
+        gpio.setup(self._pin_in2, gpio.OUT)    # IN1
+        gpio.setup(self._pin_in1, gpio.OUT)    # IN2
+        gpio.setup(self._pin_in4, gpio.OUT)    # IN3
+        gpio.setup(self._pin_in3, gpio.OUT)    # IN4
 
     def stop(self):
     # set all pins low
-        gpio.setup(self.__pin_in1, False)
-        gpio.setup(self.__pin_in2, False)
-        gpio.setup(self.__pin_in3, False)
-        gpio.setup(self.__pin_in4, False)
+        gpio.setup(self._pin_in1, False)
+        gpio.setup(self._pin_in2, False)
+        gpio.setup(self._pin_in3, False)
+        gpio.setup(self._pin_in4, False)
 
     def shutdown(self):
         self.stop()
@@ -44,11 +44,11 @@ class wheel():
     def forward(self, move_time=1):
         self._init_ouput_pins()
         # left wheele
-        gpio.output(self.__pin_in1, True)
-        gpio.output(self.__pin_in2, False)
+        gpio.output(self._pin_in1, True)
+        gpio.output(self._pin_in2, False)
         # right wheele
-        gpio.output(self.__pin_in3, True)
-        gpio.output(self.__pin_in4, False)
+        gpio.output(self._pin_in3, True)
+        gpio.output(self._pin_in4, False)
         # hold on
         time.sleep(move_time)
         # send all pins low & cleanup
@@ -58,11 +58,11 @@ class wheel():
     def reverse(self, move_time=1):
         self._init_ouput_pins()
         # left wheele reverse
-        gpio.output(self.__pin_in2, True)
-        gpio.output(self.__pin_in1, False)
+        gpio.output(self._pin_in2, True)
+        gpio.output(self._pin_in1, False)
         # right wheele reverse
-        gpio.output(self.__pin_in4, True)
-        gpio.output(self.__pin_in3, False)
+        gpio.output(self._pin_in4, True)
+        gpio.output(self._pin_in3, False)
         # hold on
         time.sleep(move_time)
         # send all pins low & cleanup
@@ -72,11 +72,11 @@ class wheel():
     def pivotleft(self, move_time=1):
         self._init_ouput_pins()
         # left wheele reverse
-        gpio.output(self.__pin_in2, True)
-        gpio.output(self.__pin_in1, False)
+        gpio.output(self._pin_in2, True)
+        gpio.output(self._pin_in1, False)
         # right wheele forward
-        gpio.output(self.__pin_in3, True)
-        gpio.output(self.__pin_in4, False)
+        gpio.output(self._pin_in3, True)
+        gpio.output(self._pin_in4, False)
         # hold on
         time.sleep(move_time)
         # send all pins low & cleanup
@@ -86,11 +86,11 @@ class wheel():
     def pivotright(self, move_time=1):
         self._init_ouput_pins()
         # left wheele forward
-        gpio.output(self.__pin_in1, True)
-        gpio.output(self.__pin_in2, False)
+        gpio.output(self._pin_in1, True)
+        gpio.output(self._pin_in2, False)
         # right wheele reverse
-        gpio.output(self.__pin_in4, True)
-        gpio.output(self.__pin_in3, False)
+        gpio.output(self._pin_in4, True)
+        gpio.output(self._pin_in3, False)
         # hold on
         time.sleep(move_time)
         # send all pins low & cleanup
@@ -100,8 +100,8 @@ class wheel():
     def __moveIt(self, direction):
         print("Key: ", direction)
         key_press = direction
-        if key_press in self.__command_2_movement.keys():
-            self.__command_2_movement[key_press]()  # only move for one second
+        if key_press in self._command_2_movement.keys():
+            self._command_2_movement[key_press]()  # only move for one second
         else:
             print("Invalid key presses!")
 
@@ -109,21 +109,21 @@ class wheel():
         key_press = input("Select driving mode: ")
         if key_press == 'q':
             return False
-        elif key_press in self.__command_2_movement:
+        elif key_press in self._command_2_movement:
             self.__moveIt(key_press)
             return True
         else:
-            print('couldn\'t recognize ', key_press, ' please enter ', str(self.__command_2_movement))
+            print('couldn\'t recognize ', key_press, ' please enter ', str(self._command_2_movement))
             return True
 
 
 class wheelControlled(wheel):
     def __init__(self):
         super().__init__()
-        self.__pin_left_encoder_pin = 7
-        self.__pin_right_encoder_pin = 12
+        self._pin_left_encoder_pin = 7
+        self._pin_right_encoder_pin = 12
 
-        self.__command_2_movement = {  # user input to drive wheel around
+        self._command_2_movement = {  # user input to drive wheel around
             'w': self.forward,
             's': self.reverse,
             'a': self.pivotleft,
@@ -148,8 +148,8 @@ class wheelControlled(wheel):
         self._init_ouput_pins()
         print("Key: ", direction)
         key_press = direction
-        if key_press in self.__command_2_movement.keys():
-            func_move = self.__command_2_movement[key_press]  # only move for one second
+        if key_press in self._command_2_movement.keys():
+            func_move = self._command_2_movement[key_press]  # only move for one second
             func_move(float(value))
         else:
             print("Invalid key presses!")
@@ -162,8 +162,8 @@ class wheelControlled(wheel):
         self._init_ouput_pins()
 
         # independent motor control via pwm, move forward with half speed
-        pwm_front_left = gpio.PWM(self.__pin_in1, 50)
-        pwm_back_right = gpio.PWM(self.__pin_in3, 50)
+        pwm_front_left = gpio.PWM(self._pin_in1, 50)
+        pwm_back_right = gpio.PWM(self._pin_in3, 50)
         pwm_front_left.start(self.duty_cycle)
         pwm_back_right.start(self.duty_cycle)
         time.sleep(0.01)
@@ -179,8 +179,8 @@ class wheelControlled(wheel):
         self._init_ouput_pins()
 
         # independent motor control via pwm, move forward with half speed
-        pwm_front_left = gpio.PWM(self.__pin_in2, 50)
-        pwm_back_right = gpio.PWM(self.__pin_in4, 50)
+        pwm_front_left = gpio.PWM(self._pin_in2, 50)
+        pwm_back_right = gpio.PWM(self._pin_in4, 50)
         pwm_front_left.start(self.duty_cycle)
         pwm_back_right.start(self.duty_cycle)
         time.sleep(0.01)
@@ -198,8 +198,8 @@ class wheelControlled(wheel):
         angle_goal = angle_init + angle
 
         # independent motor control via pwm, move forward with half speed
-        pwm_front_left = gpio.PWM(self.__pin_in2, 50)
-        pwm_back_right = gpio.PWM(self.__pin_in4, 50)
+        pwm_front_left = gpio.PWM(self._pin_in2, 50)
+        pwm_back_right = gpio.PWM(self._pin_in4, 50)
         pwm_front_left.start(self.duty_cycle)
         pwm_back_right.start(self.duty_cycle)
         time.sleep(0.01)
@@ -218,8 +218,8 @@ class wheelControlled(wheel):
         angle_goal = angle_init - angle
 
         # independent motor control via pwm, move forward with half speed
-        pwm_front_left = gpio.PWM(self.__pin_in2, 50)
-        pwm_back_right = gpio.PWM(self.__pin_in4, 50)
+        pwm_front_left = gpio.PWM(self._pin_in2, 50)
+        pwm_back_right = gpio.PWM(self._pin_in4, 50)
         pwm_front_left.start(self.duty_cycle)
         pwm_back_right.start(self.duty_cycle)
         time.sleep(0.01)
@@ -235,12 +235,12 @@ class wheelControlled(wheel):
         key_press = input("Select driving mode: ")
         if key_press == 'q':
             return False
-        elif key_press in self.__command_2_movement.keys():
+        elif key_press in self._command_2_movement.keys():
             value = float(input("enter value for this move: distance in cm, angle in degree"))
             self.__moveIt(direction=key_press, value=value)
             return True
         else:
-            print('couldn\'t recognize ', key_press, ' please enter ', str(self.__command_2_movement))
+            print('couldn\'t recognize ', key_press, ' please enter ', str(self._command_2_movement))
             return True
 
 
