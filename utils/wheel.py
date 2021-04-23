@@ -196,6 +196,7 @@ class wheelControlled(wheel):
         self._init_ouput_pins()
         angle_init = self.imu_.angle()
         angle_goal = angle_init - angle
+        print(angle_init, 'to', angle_goal)
 
         # independent motor control via pwm, move forward with half speed
         pwm_front_left = gpio.PWM(self._pin_in2, 50)
@@ -218,6 +219,7 @@ class wheelControlled(wheel):
         self._init_ouput_pins()
         angle_init = self.imu_.angle()
         angle_goal = angle_init + angle
+        print(angle_init, 'to', angle_goal)
 
         # independent motor control via pwm, move forward with half speed
         pwm_front_left = gpio.PWM(self._pin_in2, 50)
