@@ -35,12 +35,12 @@ def keep_tracking(camera_, color_limit_object):
 
         """find a contour around the object"""
         center, area = find_ROI(img, color_limit_object)
-
+        radius = np.sqrt(area/2/np.pi)
         """calculate the pixel coord"""
         angle = camera_.coord_img_to_pose(center)
         if area > 5.0:    # if the pixel cluster is big enough
 
-            cv2.circle(img, center, 7, (255, 255, 255), -1)
+            cv2.circle(img, center, radius, (255, 255, 255), -1)
             cv2.imshow(str(center), img)
             cv2.waitKey(0)
 
