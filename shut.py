@@ -9,7 +9,7 @@ class camera():
     def __init__(self):
         # initialize the Raspberry Pi camera
         self.camera = PiCamera()
-        self.camera.__resolution = (640, 480)
+        self.camera.resolution = (640, 480)
         self.camera.framerate = 25
         self.rawCapture = PiRGBArray(camera, size=(640,480))
         # define the codec and create VideoWriter object
