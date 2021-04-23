@@ -20,6 +20,7 @@ while True:
             line = str(line)
             line = line.strip(',')
             line = line.strip("b'")
+            line = line.strip('X:')
             print(line)
 
             # return float
