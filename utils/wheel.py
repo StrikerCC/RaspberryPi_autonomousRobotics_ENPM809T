@@ -1,6 +1,6 @@
 import RPi.GPIO as gpio
 import time
-from utils.sensors import encoder, imu
+from RaspberryPi_autonomousRobotics_ENPM809T.utils.sensors import encoder, imu
 
 
 class wheel():
