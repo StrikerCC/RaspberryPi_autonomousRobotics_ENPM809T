@@ -23,12 +23,12 @@ class camera_pi():
 
     def view_one_frame(self):
         # grab the first frame
-        frame = self.__camera.capture_continuous(self.rawCapture, format="bgr", use_video_port=False)[0]
-        image = frame.array
-        image = cv2.flip(image, 0)
-        # clear the stream in preparation for the next frame
-        self.rawCapture.truncate(0)
-        return image
+        for frame in self.__camera.capture_continuous(self.rawCapture, format="bgr", use_video_port=False):
+            image = frame.array
+            image = cv2.flip(image, 0)
+            # clear the stream in preparation for the next frame
+            self.rawCapture.truncate(0)
+            return image
 
     def view_some_frames(self, num_frames=5, text=None):
         # keep looping for some frames
