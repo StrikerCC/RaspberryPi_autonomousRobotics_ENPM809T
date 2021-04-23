@@ -205,11 +205,12 @@ class wheelControlled(wheel):
         pwm_back_right.start(self.duty_cycle)
         time.sleep(0.01)
 
-        if 360.0 - angle_goal - 0.5 <= self.imu_.angle() <= 360.0 - angle_goal + 0.5:
-            print(angle_init, 'to', angle_goal)
-            print('reach', self.imu_.angle())
-            pwm_front_left.stop()
-            pwm_back_right.stop()
+        for _ in range(1000):
+            if 360.0 - angle_goal - 0.5 <= self.imu_.angle() <= 360.0 - angle_goal + 0.5:
+                print(angle_init, 'to', angle_goal)
+                print('reach', self.imu_.angle())
+                pwm_front_left.stop()
+                pwm_back_right.stop()
         # send all pins low & cleanup
         self.stop()
         gpio.cleanup()
@@ -228,12 +229,13 @@ class wheelControlled(wheel):
         pwm_back_right.start(self.duty_cycle)
         time.sleep(0.01)
 
-        if angle_goal-0.5 < self.imu_.angle() < angle_goal-0.5:
-            print(angle_init, 'to', angle_goal)
-            print('reach', self.imu_.angle())
-            pwm_front_left.stop()
-            pwm_back_right.stop()
-        # send all pins low & cleanup
+        for _ in range(1000):
+            if angle_goal-0.5 < self.imu_.angle() < angle_goal-0.5:
+                print(angle_init, 'to', angle_goal)
+                print('reach', self.imu_.angle())
+                pwm_front_left.stop()
+                pwm_back_right.stop()
+            # send all pins low & cleanup
         self.stop()
         gpio.cleanup()
 
