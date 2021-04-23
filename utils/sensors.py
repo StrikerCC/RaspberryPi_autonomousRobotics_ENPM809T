@@ -84,7 +84,7 @@ class imu():
                 # avoid first n-line of serial information
                 if count > 5:
                     angle = self.__line_to_angle(line)
-                print(angle)
+                # print(angle)
             else:
                 print('cannot listen to imu')
 
