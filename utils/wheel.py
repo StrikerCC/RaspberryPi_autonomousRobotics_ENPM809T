@@ -224,7 +224,7 @@ class wheelControlled(wheel):
         pwm_back_right.start(self.duty_cycle)
         time.sleep(0.01)
 
-        if self.imu_.angle() >= angle_goal:
+        if angle_goal-0.5 < self.imu_.angle() < angle_goal-0.5:
             pwm_front_left.stop()
             pwm_back_right.stop()
         # send all pins low & cleanup
