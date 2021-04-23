@@ -140,7 +140,7 @@ class wheelControlled(wheel):
 
         """motor control parameters for motor"""
         self.frequency = 50     # motor control frequency
-        self.duty_cycle = 40    # duty cycle to control motor effect voltage
+        self.duty_cycle = 60    # duty cycle to control motor effect voltage
         """motor control parameters for encoder"""
         self.meter_2_ticks = 98 # number of ticks per meter of travelling
         """motor control parameters for imu"""
@@ -233,6 +233,7 @@ class wheelControlled(wheel):
         time.sleep(0.01)
 
         for _ in range(100):
+            print(360.0 - angle_goal - self._tolerance, 'in', self.imu_.angle(), 'in', 360.0 - angle_goal + self._tolerance)
             if 360.0 - angle_goal - self._tolerance <= self.imu_.angle() <= 360.0 - angle_goal + self._tolerance:
                 print(angle_init, 'to', angle_goal)
                 print('reach', self.imu_.angle())
