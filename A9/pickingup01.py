@@ -58,12 +58,12 @@ def keep_tracking(camera_, color_limit_object):
 
 def rotate_to_object(wheel, angle):
     assert -360.0 < angle < 360.0, 'cannot rotate ' + str(angle) + ' degree'
-    offset = 2.0
+    offset = 9.0
     if angle == 0.0:
         return True
     elif angle > 0.0:
         print('go left', angle)
-        wheel.pivotleft(abs(angle) + offset)
+        wheel.pivotleft(abs(angle) - offset)
         return True
     elif angle < 0.0:
         print('go right', angle)
