@@ -91,8 +91,7 @@ def main():
             print('find object at', angle, 'degree')
 
             assert angle[0] < camera_.fov()[0]  # only rotate in horizontal
-            # rotate_to_object(wheel_, angle[0])
-            wheel_.
+            rotate_to_object(wheel_, angle[0])
         else:
             break
 
