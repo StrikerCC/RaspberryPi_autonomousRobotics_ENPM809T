@@ -204,7 +204,7 @@ class wheelControlled(wheel):
         self._init_ouput_pins()
         angle_init = self.imu_.angle()
         angle_goal_left = ((angle_init - angle - self._tolerance) + 360.0) % 360.0  # left limit
-        angle_goal_right = ((angle_init - angle + self._tolerance) + 360.0) % 360.0 # right limit
+        angle_goal_right = max(((angle_init - angle + self._tolerance) + 360.0) % 360.0, angle_goal_left + 2*self._tolerance) # right limit
         print(angle_init, 'to range', angle_goal_left, angle_goal_right)
 
         # independent motor control via pwm, move forward with half speed
@@ -216,7 +216,7 @@ class wheelControlled(wheel):
 
         for _ in range(100):
             print(angle_goal_left, self.imu_.angle(), angle_goal_right)
-            if angle_goal_left <= self.imu_.angle() <= angle_goal_right:
+            if self.imu_.angle() <= angle_goal_right:
                 print('reach', self.imu_.angle())
                 pwm_front_left.stop()
                 pwm_back_right.stop()
@@ -232,6 +232,13 @@ class wheelControlled(wheel):
         angle_goal = angle_init + angle
         print(angle_init, 'to', angle_goal)
 
+        self._init_ouput_pins()
+        angle_init = self.imu_.angle()
+        angle_goal_left = ((angle_init + angle - self._tolerance) + 360.0) % 360.0  # left limit
+        angle_goal_right = max(((angle_init + angle + self._tolerance) + 360.0) % 360.0,
+                               angle_goal_left + 2 * self._tolerance)  # right limit
+        print(angle_init, 'to range', angle_goal_left, angle_goal_right)
+
         # independent motor control via pwm, move forward with half speed
         pwm_front_left = gpio.PWM(self._pin_in1, 50)
         pwm_back_right = gpio.PWM(self._pin_in4, 50)
@@ -241,7 +248,7 @@ class wheelControlled(wheel):
 
         for _ in range(100):
             print(angle_goal - self._tolerance, '<', self.imu_.angle(), '<', angle_goal + self._tolerance)
-            if angle_goal - self._tolerance < self.imu_.angle() < angle_goal + self._tolerance:
+            if angle_goal_left <= self.imu_.angle():
                 print(angle_init, 'to', angle_goal)
                 print('reach', self.imu_.angle())
                 pwm_front_left.stop()
