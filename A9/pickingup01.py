@@ -94,9 +94,9 @@ def main():
             angle = keep_tracking(camera_, object_color)
             print('find object at', angle, 'degree')
 
-            assert angle[1] < camera_.fov()[1]  # only rotate in horizontal
-            rotate_to_object(wheel_, angle[1])
-            move_to_object(wheel_, angle[0])
+            assert angle[0] < camera_.fov()[0]  # only rotate in horizontal
+            rotate_to_object(wheel_, angle[0])
+            move_to_object(wheel_, angle[1])
         else:
             break
 
