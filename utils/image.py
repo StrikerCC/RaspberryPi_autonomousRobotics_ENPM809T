@@ -15,16 +15,16 @@ import cv2
 
 def color_mask(img, limits):
     img_HSV = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    # cv2.imshow('HSV', frame)
-    # cv2.waitKey(0)
+    cv2.imshow('HSV', img_HSV)
+    cv2.waitKey(0)
 
     ### hsv filter for green
     low_h, low_s, low_v = limits['low_limit']
     high_h, high_s, high_v = limits['up_limit']
 
     img_thresh = cv2.inRange(img_HSV, (low_h, low_s, low_v), (high_h, high_s, high_v))
-    # cv2.imshow('mask', frame_thresh)
-    # cv2.waitKey(0)
+    cv2.imshow('mask', img_thresh)
+    cv2.waitKey(0)
     return img_thresh
 
 
@@ -47,9 +47,14 @@ def find_ROI(img, limits):
     :rtype:
     """
     mask = color_mask(img, limits)
-    im2, contours, hierarchy = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    contours, hierarchy = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
     contour = contours[0]
-    M = cv2.moments(contours)
+    cv2.drawContours(img, [contour], -1, (0, 0, 255), 3)
+    cv2.imshow('tracking', img)
+    cv2.waitKey(0)
+    
+    M = cv2.moments(contour)
     cX = int(M['m10'] / M['m00'])
     cY = int(M['m01'] / M['m00'])
     area = cv2.contourArea(contour)

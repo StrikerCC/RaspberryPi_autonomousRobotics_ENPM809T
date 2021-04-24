@@ -123,7 +123,7 @@ class camera_pi():
         """calculate the angle from center line to the pixel"""
         coord_img = coord_img - (np.array(self.__resolution) / 2)
         angle = coord_img * self.pixel_to_angle
-        assert 0.0 <= angle <= 360.0
+        #assert 0.0 <= angle <= 360.0
         return angle
 
     def fov(self):
