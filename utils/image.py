@@ -23,8 +23,8 @@ def color_mask(img, limits):
     high_h, high_s, high_v = limits['up_limit']
 
     img_thresh = cv2.inRange(img_HSV, (low_h, low_s, low_v), (high_h, high_s, high_v))
-    cv2.imshow('mask', img_thresh)
-    cv2.waitKey(0)
+    # cv2.imshow('mask', img_thresh)
+    # cv2.waitKey(0)
     return img_thresh
 
 
@@ -51,8 +51,8 @@ def find_ROI(img, limits):
     # dilate the mask
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (9, 9))
     mask = cv2.dilate(mask, kernel)
-    cv2.imshow('dilated', mask)
-    cv2.waitKey(0)
+    # cv2.imshow('dilated', mask)
+    # cv2.waitKey(0)
 
     # get contours
     contours, hierarchy = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -65,8 +65,8 @@ def find_ROI(img, limits):
             area_biggest = area
 
     cv2.drawContours(img, [contour_biggest], -1, (0, 0, 255), 3)
-    cv2.imshow('tracking', img)
-    cv2.waitKey(0)
+    # cv2.imshow('tracking', img)
+    # cv2.waitKey(0)
     
     M = cv2.moments(contour_biggest)
     cX = int(M['m10'] / M['m00'])
@@ -75,7 +75,7 @@ def find_ROI(img, limits):
     cv2.circle(mask, (cX, cY), 7, (255, 255, 255), -1)
     cv2.putText(mask, str((cX, cY)), (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 1)
     # show the image
-    cv2.imshow('image', mask)
-    cv2.waitKey(0)
+    # cv2.imshow('image', mask)
+    # cv2.waitKey(0)
 
     return (cX, cY), area_biggest

@@ -37,7 +37,7 @@ def keep_tracking(camera_, color_limit_object):
         center, area = find_ROI(img, color_limit_object)
         radius = np.sqrt(area/2/np.pi)
 
-        cv2.circle(img, center, int(radius), (255, 255, 255), -1)
+        cv2.circle(img, center, int(radius), (255, 155, 155), 1)
         cv2.imshow(str(center), img)
         cv2.waitKey(0)
 
@@ -61,9 +61,11 @@ def rotate_to_object(wheel, angle):
     if angle == 0.0:
         return True
     elif angle < 0.0:
+        print('go left', angle)
         wheel.pivotleft(abs(angle))
         return True
     elif angle > 0.0:
+        print('go right', angle)
         wheel.pivotright(abs(angle))
         return True
     return False

@@ -150,7 +150,7 @@ class wheelControlled(wheel):
         """motor control parameters for encoder"""
         self.meter_2_ticks = 98 # number of ticks per meter of travelling
         """motor control parameters for imu"""
-        self._tolerance = 10
+        self._tolerance = 2
 
     def __moveIt(self, direction='a', value=1.0):
         self._init_ouput_pins()
