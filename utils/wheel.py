@@ -145,8 +145,8 @@ class wheelControlled(wheel):
         self.imu_ = imu()
 
         """motor control parameters for motor"""
-        self.frequency = 50     # motor control frequency
-        self.duty_cycle = 60    # duty cycle to control motor effect voltage
+        self.frequency = 10     # motor control frequency
+        self.duty_cycle = 50    # duty cycle to control motor effect voltage
         """motor control parameters for encoder"""
         self.meter_2_ticks = 98 # number of ticks per meter of travelling
         """motor control parameters for imu"""
