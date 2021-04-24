@@ -1,5 +1,10 @@
 import RPi.GPIO as gpio
 import time
+
+
+sys.path.insert(0, os.path.dirname(os.getcwd()))
+
+
 from RaspberryPi_autonomousRobotics_ENPM809T.utils.sensors import encoder, imu
 
 
