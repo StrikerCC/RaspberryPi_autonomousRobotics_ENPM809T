@@ -15,13 +15,14 @@ import cv2
 import sys
 import os
 
+
 sys.path.insert(0, os.path.dirname(os.getcwd()))
+
 
 from RaspberryPi_autonomousRobotics_ENPM809T.utils.camera_pi import camera_pi
 from RaspberryPi_autonomousRobotics_ENPM809T.utils.wheel import wheelControlled
 
 from RaspberryPi_autonomousRobotics_ENPM809T.utils.image import find_ROI
-
 
 def keep_tracking(camera_, color_limit_object):
     frames_out = 10000
@@ -34,15 +35,16 @@ def keep_tracking(camera_, color_limit_object):
 
         """find a contour around the object"""
         center, area = find_ROI(img, color_limit_object)
-        radius = np.sqrt(area / 2 / np.pi)
+        radius = np.sqrt(area/2/np.pi)
 
-        cv2.circle(img, center, int(radius), (255, 255, 255), -1)
+        cv2.circle(img, center, int(radius), (255, 155, 155), 1)
         cv2.imshow(str(center), img)
         cv2.waitKey(0)
+        cv2.destroyAllWindows()
 
         """calculate the pixel coord"""
         angle = camera_.coord_img_to_pose(center)
-        if area > 5.0:  # if the pixel cluster is big enough
+        if area > 5.0:    # if the pixel cluster is big enough
 
             """transform to img coord"""
             print('frame', i, 'found object at', angle, 'degree')
@@ -56,14 +58,16 @@ def keep_tracking(camera_, color_limit_object):
 
 def rotate_to_object(wheel, angle):
     assert -360.0 < angle < 360.0, 'cannot rotate ' + str(angle) + ' degree'
-
+    offset = 2.0
     if angle == 0.0:
         return True
-    elif angle < 0.0:
-        wheel.pivotleft(abs(angle))
-        return True
     elif angle > 0.0:
-        wheel.pivotright(abs(angle))
+        print('go left', angle)
+        wheel.pivotleft(abs(angle) + offset)
+        return True
+    elif angle < 0.0:
+        print('go right', angle)
+        wheel.pivotright(abs(angle) + offset)
         return True
     return False
 
@@ -80,7 +84,7 @@ def main():
     """object color info"""
     low_h, low_s, low_v = (0, 174, 50)
     high_h, high_s, high_v = (12, 255, 189)
-    object_color = {  ### hsv filter for object
+    object_color = {    ### hsv filter for object
         'low_limit': (low_h, low_s, low_v),
         'up_limit': (high_h, high_s, high_v)
     }
@@ -89,15 +93,13 @@ def main():
     wheel_ = wheelControlled()
 
     print('tracking obejct of color', object_color)
-    while True:
+    for _ in range(20):
         if input('continue? y?') == 'y':
             angle = keep_tracking(camera_, object_color)
             print('find object at', angle, 'degree')
 
             assert angle[0] < camera_.fov()[0]  # only rotate in horizontal
             rotate_to_object(wheel_, angle[0])
-
-            # move_to_object(wheel_, angle[1])
             wheel_.read_user_input_then_move_acoordingly()
         else:
             break
