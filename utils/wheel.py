@@ -215,7 +215,7 @@ class wheelControlled(wheel):
         time.sleep(0.01)
 
         for _ in range(100):
-            print(angle_goal_left, self.imu_.angle(), angle_goal_right)
+            print(angle_goal_left, '<', self.imu_.angle(), '<', angle_goal_right)
             if self.imu_.angle() <= angle_goal_right:
                 print('reach', self.imu_.angle())
                 pwm_front_left.stop()
@@ -247,7 +247,7 @@ class wheelControlled(wheel):
         time.sleep(0.01)
 
         for _ in range(100):
-            print(angle_goal - self._tolerance, '<', self.imu_.angle(), '<', angle_goal + self._tolerance)
+            print(angle_goal_left, '<', self.imu_.angle(), '<', angle_goal_right)
             if angle_goal_left <= self.imu_.angle():
                 print(angle_init, 'to', angle_goal)
                 print('reach', self.imu_.angle())
