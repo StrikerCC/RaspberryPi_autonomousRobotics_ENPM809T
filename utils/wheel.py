@@ -170,8 +170,8 @@ class wheelControlled(wheel):
         self._init_ouput_pins()
 
         # independent motor control via pwm, move forward with half speed
-        pwm_front_left = gpio.PWM(self._pin_in1, 50)
-        pwm_back_right = gpio.PWM(self._pin_in3, 50)
+        pwm_front_left = gpio.PWM(self._pin_in1, self.frequency)
+        pwm_back_right = gpio.PWM(self._pin_in3, self.frequency)
         pwm_front_left.start(self.duty_cycle)
         pwm_back_right.start(self.duty_cycle)
         time.sleep(0.01)
@@ -187,8 +187,8 @@ class wheelControlled(wheel):
         self._init_ouput_pins()
 
         # independent motor control via pwm, move forward with half speed
-        pwm_front_left = gpio.PWM(self._pin_in2, 50)
-        pwm_back_right = gpio.PWM(self._pin_in4, 50)
+        pwm_front_left = gpio.PWM(self._pin_in2, self.frequency)
+        pwm_back_right = gpio.PWM(self._pin_in4, self.frequency)
         pwm_front_left.start(self.duty_cycle)
         pwm_back_right.start(self.duty_cycle)
         time.sleep(0.01)
@@ -208,8 +208,11 @@ class wheelControlled(wheel):
         print(angle_init, 'to range', angle_goal_left, angle_goal_right)
 
         # independent motor control via pwm, move forward with half speed
-        pwm_front_left = gpio.PWM(self._pin_in2, 50)
-        pwm_back_right = gpio.PWM(self._pin_in3, 50)
+        pwm_front_left = gpio.PWM(self._pin_in2, self.frequency)
+        pwm_back_right = gpio.PWM(self._pin_in3, self.frequency)
+        gpio.output(self._pin_in1, False)
+        gpio.output(self._pin_in4, False)
+
         pwm_front_left.start(self.duty_cycle)
         pwm_back_right.start(self.duty_cycle)
         time.sleep(0.01)
@@ -240,10 +243,13 @@ class wheelControlled(wheel):
         print(angle_init, 'to range', angle_goal_left, angle_goal_right)
 
         # independent motor control via pwm, move forward with half speed
-        pwm_front_left = gpio.PWM(self._pin_in1, 50)
-        pwm_back_right = gpio.PWM(self._pin_in4, 50)
+        pwm_front_left = gpio.PWM(self._pin_in1, self.frequency)
+        pwm_back_right = gpio.PWM(self._pin_in4, self.frequency)
         pwm_front_left.start(self.duty_cycle)
         pwm_back_right.start(self.duty_cycle)
+        gpio.output(self._pin_in2, False)
+        gpio.output(self._pin_in3, False)
+
         time.sleep(0.01)
 
         for _ in range(100):

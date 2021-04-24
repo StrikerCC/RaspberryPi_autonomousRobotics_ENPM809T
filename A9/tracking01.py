@@ -61,11 +61,11 @@ def rotate_to_object(wheel, angle):
 
     if angle == 0.0:
         return True
-    elif angle < 0.0:
+    elif angle > 0.0:
         print('go left', angle)
         wheel.pivotleft(abs(angle))
         return True
-    elif angle > 0.0:
+    elif angle < 0.0:
         print('go right', angle)
         wheel.pivotright(abs(angle))
         return True
