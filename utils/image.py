@@ -49,7 +49,7 @@ def find_ROI(img, limits):
     mask = color_mask(img, limits)
 
     # dilate the mask
-    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (7, 7))
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (9, 9))
     mask = cv2.dilate(mask, kernel)
     cv2.imshow('dilated', mask)
     cv2.waitKey(0)
@@ -73,6 +73,7 @@ def find_ROI(img, limits):
     cY = int(M['m01'] / M['m00'])
 
     cv2.circle(mask, (cX, cY), 7, (255, 255, 255), -1)
+    cv2.putText(mask, str((cX, cY)), (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 1)
     # show the image
     cv2.imshow('image', mask)
     cv2.waitKey(0)

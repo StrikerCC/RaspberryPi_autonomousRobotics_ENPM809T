@@ -36,15 +36,18 @@ def keep_tracking(camera_, color_limit_object):
         """find a contour around the object"""
         center, area = find_ROI(img, color_limit_object)
         radius = np.sqrt(area/2/np.pi)
+
+        cv2.circle(img, center, radius, (255, 255, 255), -1)
+        cv2.imshow(str(center), img)
+        cv2.waitKey(0)
+
         """calculate the pixel coord"""
         angle = camera_.coord_img_to_pose(center)
         if area > 5.0:    # if the pixel cluster is big enough
 
-            cv2.circle(img, center, radius, (255, 255, 255), -1)
-            cv2.imshow(str(center), img)
-            cv2.waitKey(0)
 
             """transform to img coord"""
+            print('frame', i, 'found object at', angle, 'degree')
             return angle
 
         if i % 100 == 0:
@@ -53,7 +56,7 @@ def keep_tracking(camera_, color_limit_object):
     return None
 
 
-def rotate(wheel, angle):
+def rotate_to_object(wheel, angle):
     assert -360.0 < angle < 360.0, 'cannot rotate ' + str(angle) + ' degree'
 
     if angle == 0.0:
@@ -85,8 +88,8 @@ def main():
             angle = keep_tracking(camera_, object_color)
             print('find object at', angle, 'degree')
 
-            assert angle < camera_.fov()
-            rotate(wheel_, angle)
+            assert angle[1] < camera_.fov()[1]  # only rotate in horizontal
+            rotate_to_object(wheel_, angle[1])
         else:
             break
 
