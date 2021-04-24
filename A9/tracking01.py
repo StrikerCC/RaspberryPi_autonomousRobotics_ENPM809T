@@ -84,7 +84,7 @@ def main():
     wheel_ = wheelControlled()
 
     print('tracking obejct of color', object_color)
-    while True:
+    for _ in range(20):
         if input('continue? y?') == 'y':
             angle = keep_tracking(camera_, object_color)
             print('find object at', angle, 'degree')
