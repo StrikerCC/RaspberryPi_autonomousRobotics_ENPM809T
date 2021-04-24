@@ -67,7 +67,7 @@ def rotate_to_object(wheel, angle):
         return True
     elif angle < 0.0:
         print('go right', angle)
-        wheel.pivotright(abs(angle) + offset)
+        wheel.pivotright(abs(angle) - offset)
         return True
     return False
 
