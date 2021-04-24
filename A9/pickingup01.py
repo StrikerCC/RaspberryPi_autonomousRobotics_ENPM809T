@@ -96,7 +96,9 @@ def main():
 
             assert angle[0] < camera_.fov()[0]  # only rotate in horizontal
             rotate_to_object(wheel_, angle[0])
-            move_to_object(wheel_, angle[1])
+
+            # move_to_object(wheel_, angle[1])
+            wheel_.read_user_input_then_move_acoordingly()
         else:
             break
 
