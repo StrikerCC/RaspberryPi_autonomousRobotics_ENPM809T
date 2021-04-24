@@ -36,7 +36,7 @@ def keep_tracking(camera_, color_limit_object):
         center, area = find_ROI(img, color_limit_object)
         radius = np.sqrt(area / 2 / np.pi)
 
-        cv2.circle(img, center, radius, (255, 255, 255), -1)
+        cv2.circle(img, center, int(radius), (255, 255, 255), -1)
         cv2.imshow(str(center), img)
         cv2.waitKey(0)
 
