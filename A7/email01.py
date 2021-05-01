@@ -41,7 +41,7 @@ def main():
     msg.attach(img)
 
     # send email 
-    s = smtplib.SMTP('smtp.163.com', 587)
+    s = smtplib.SMTP('smtp.163.com', 465)
     s.ehlo()
     s.starttls()
     s.ehlo()
