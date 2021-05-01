@@ -16,8 +16,8 @@ def main():
     os.system(command)
     
     # email information
-    smtpUser = '814786040@qq.com'
-    smtpPass = 'CCws1014528909'
+    smtpUser = 'chengc0611@613.com'
+    smtpPass = 'CCws886747'
 
     # destination email information
     toAdd = 'chengc0611@gmail.com'
@@ -40,7 +40,7 @@ def main():
     msg.attach(img)
 
     # send email 
-    s = smtplib.SMTP('smtp.qq.com', 587)
+    s = smtplib.SMTP('smtp.163.com', 587)
     s.ehlo()
     s.starttls()
     s.ehlo()
