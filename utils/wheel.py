@@ -201,7 +201,7 @@ class wheelControlled(wheel):
         gpio.cleanup()
 
     def spin_left_init(self, duty_cycle=50):
-        self._init_ouput_pins()
+        # self._init_ouput_pins()
 
         # independent motor control via pwm, move forward with half speed
         pwm_left = gpio.PWM(self._pin_in2, self.frequency)
@@ -213,7 +213,6 @@ class wheelControlled(wheel):
         return pwm_left, pwm_right
 
     def spin_right_init(self, duty_cycle=50):
-        self._init_ouput_pins()
 
         # independent motor control via pwm, move forward with half speed
         pwm_left = gpio.PWM(self._pin_in2, self.frequency)
@@ -231,18 +230,18 @@ class wheelControlled(wheel):
         gpio.cleanup()
 
     def turn(self, angle=0.0):
-        self._init_ouput_pins()
-
         """measure the init orientation of robot"""
         angle_init = self.imu_.angle()
-        angle_goal_left = ((angle_init - angle - self._tolerance) + 360.0) % 360.0  # left limit
-        angle_goal_right = max(((angle_init - angle + self._tolerance) + 360.0) % 360.0,
+        angle_goal_left = ((angle_init + angle - self._tolerance) + 360.0) % 360.0  # left limit
+        angle_goal_right = max(((angle_init + angle + self._tolerance) + 360.0) % 360.0,
                                angle_goal_left + 2 * self._tolerance)  # right limit
         if 270.0 < angle_goal_left:
             angle_goal_left -= 360.0
-
+        if 270.0 < angle_goal_right:
+            angle_goal_right -= 360.0
         """start spin"""
         pwm_left, pwm_right = None, None
+        self._init_ouput_pins()
         for _ in range(10000):
             angle_current = self.imu_.angle()
             print(angle_goal_left, '<', angle_current, '<', angle_goal_right)
