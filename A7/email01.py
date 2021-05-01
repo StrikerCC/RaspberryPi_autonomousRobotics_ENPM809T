@@ -16,8 +16,8 @@ def main():
     os.system(command)
     
     # email information
-    smtpUser = 'groudvehicle.cheng@gmail.com'
-    smtpPass = 'CCws886747'
+    smtpUser = '814786040@qq.com'
+    smtpPass = 'CCws1014528909'
 
     # destination email information
     toAdd = 'chengc0611@gmail.com'

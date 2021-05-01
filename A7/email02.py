@@ -14,11 +14,12 @@ import os
 from datetime import datetime
 import smtplib
 
+
 def main():
-    my_email, my_password = 'groudvehicle.cheng@gmail.com', 'CCws886747'
+    my_email, my_password = '814786040@qq.com', 'CCws1014528909'
     recipent = 'chengc0611@gmail.com'
     quote = 'wtf'
-    connection = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+    connection = smtplib.SMTP_SSL('smtp.qq.com', 465)
     connection.ehlo()
     connection.login(user=my_email, password=my_password)
     connection.sendmail(from_addr=my_email,
