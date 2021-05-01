@@ -122,6 +122,8 @@ class wheel():
             print('couldn\'t recognize ', key_press, ' please enter ', str(self._command_2_movement))
             return True
 
+    def retrive_path(self):
+
 
 class wheelControlled(wheel):
     def __init__(self):
@@ -135,9 +137,10 @@ class wheelControlled(wheel):
             'a': self.pivotleft,
             'd': self.pivotright
         }
-        self.limit = {  # limit of distance and angle user can input each prompt
-            'distance': (0.0, 2.5),
-            'angle': (0.0, 360.5)
+
+        self.path = {
+            'move_len': [0],
+            'orientations': [0]
         }
 
         """sensors"""
@@ -374,6 +377,18 @@ class wheelControlled(wheel):
             print('couldn\'t recognize ', key_press, ' please enter ', str(self._command_2_movement))
             return True
 
+    def rectangle(self, side0=2.0, side1=0.5):
+        self._init_ouput_pins()
+
+        self.forward(side0)     # move forward side0
+        self.turn(-90)          # turn left 90
+        self.forward(side1)     # move forward side1
+        self.turn(-90)          # turn left 90
+        self.forward(side0)     # move forward side0
+        self.turn(-90)          # turn left 90
+        self.forward(side1)     # move forward side1
+        self.turn(-90)          # turn left 90
+        return
 
 def main():
     driver = wheel()
