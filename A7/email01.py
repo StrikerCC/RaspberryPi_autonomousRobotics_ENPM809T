@@ -40,7 +40,7 @@ def main():
     msg.attach(img)
 
     # send email 
-    s = smtplib.SMTP('smtp.gmail.com', 587)
+    s = smtplib.SMTP('smtp.qq.com', 587)
     s.ehlo()
     s.starttls()
     s.ehlo()
