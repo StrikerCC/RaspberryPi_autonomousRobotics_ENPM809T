@@ -228,7 +228,7 @@ class wheelControlled(wheel):
         pwm_left, pwm_right = pwm
         if pwm_left: pwm_left.stop()
         if pwm_right: pwm_right.stop()
-        self.stop()
+        #self.stop()
         gpio.cleanup()
 
     def turn(self, angle=0.0):
@@ -261,6 +261,7 @@ class wheelControlled(wheel):
                 if angle_current > angle_goal_left and angle_current > angle_goal_right:    # spin left if bigger than left and right limit
                     self.spin_start(pwm_l, 50)
                 elif angle_current < angle_goal_left and angle_current < angle_goal_right:  # spin right if smaller than left and right limit
+                    continue
                     self.spin_start(pwm_r, 50)
                 else:                                                                       # stop pin
                     break
