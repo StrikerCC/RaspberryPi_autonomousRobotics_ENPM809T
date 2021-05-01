@@ -123,6 +123,7 @@ class wheel():
             return True
 
     def retrive_path(self):
+        pass
 
 
 class wheelControlled(wheel):
@@ -404,6 +405,7 @@ def main():
         if not driver.read_user_input_then_turn_acoordingly():
             break
     print('driving with distance done')
+    driver.rectangle()
 
 
 if __name__ == '__main__':
