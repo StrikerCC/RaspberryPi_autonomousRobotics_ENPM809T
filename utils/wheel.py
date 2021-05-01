@@ -200,30 +200,32 @@ class wheelControlled(wheel):
         self.stop()
         gpio.cleanup()
 
-    def spin_left_init(self, duty_cycle=50):
-        # self._init_ouput_pins()
-
-        # independent motor control via pwm, move forward with half speed
-        pwm_left = gpio.PWM(self._pin_in2, self.frequency)
-        pwm_right = gpio.PWM(self._pin_in3, self.frequency)
-
-        pwm_left.start(self.duty_cycle)
-        pwm_right.start(self.duty_cycle)
+    def spin_start(self, pwm, duty_cycle=50):
+        """
+        start pwm signal to preset pins
+        :param pwm:
+        :type pwm:
+        :param duty_cycle:
+        :type duty_cycle:
+        :return:
+        :rtype:
+        """
+        pwm_left, pwm_right = pwm
+        pwm_left.start(duty_cycle)
+        pwm_right.start(duty_cycle)
         time.sleep(0.01)
         return pwm_left, pwm_right
 
-    def spin_right_init(self, duty_cycle=50):
-
+    def spin_init(self):
         # independent motor control via pwm, move forward with half speed
-        pwm_left = gpio.PWM(self._pin_in2, self.frequency)
-        pwm_right = gpio.PWM(self._pin_in3, self.frequency)
+        pwm_l_left_wheel = gpio.PWM(self._pin_in2, self.frequency)
+        pwm_l_right_wheel = gpio.PWM(self._pin_in3, self.frequency)
+        pwm_r_left_wheel = gpio.PWM(self._pin_in1, self.frequency)
+        pwm_r_right_wheel = gpio.PWM(self._pin_in4, self.frequency)
+        return (pwm_l_left_wheel, pwm_l_right_wheel), (pwm_r_left_wheel, pwm_r_right_wheel)
 
-        pwm_left.start(self.duty_cycle)
-        pwm_right.start(self.duty_cycle)
-        time.sleep(0.01)
-        return pwm_left, pwm_right
-
-    def spin_end(self, pwm_left, pwm_right):
+    def spin_end(self, pwm):
+        pwm_left, pwm_right = pwm
         if pwm_left: pwm_left.stop()
         if pwm_right: pwm_right.stop()
         self.stop()
@@ -239,6 +241,8 @@ class wheelControlled(wheel):
         """
         """measure the init orientation of robot"""
         angle_init = self.imu_.angle()
+
+        """make a range of target for desired robot orientation"""
         angle_goal_left = ((angle_init + angle - self._tolerance) + 360.0) % 360.0  # left limit
         angle_goal_right = max(((angle_init + angle + self._tolerance) + 360.0) % 360.0,
                                angle_goal_left + 2 * self._tolerance)  # right limit
@@ -248,25 +252,33 @@ class wheelControlled(wheel):
             angle_goal_right -= 360.0
 
         """start spin"""
-        gpio.cleanup()
-        pwm_left, pwm_right = None, None
-        self._init_ouput_pins()
-        for _ in range(10000):
-            angle_current = self.imu_.angle()
-            print(angle_goal_left, '<', angle_current, '<', angle_goal_right)
-            if angle_current > angle_goal_left and angle_current > angle_goal_right:    # spin left if bigger than left and right limit
-                pwm_left, pwm_right = self.spin_left_init(50)
-            elif angle_current < angle_goal_left and angle_current < angle_goal_right:  # spin right if smaller than left and right limit
-                pwm_left, pwm_right = self.spin_right_init(50)
-            else:                                                                       # stop pin
-                break
-        """stop spin"""
-        if pwm_right or pwm_left:
-            self.spin_end(pwm_left, pwm_right)
+        try:
+            self._init_ouput_pins()
+            pwm_l, pwm_r = self.spin_init()     # start pwm_l to turn left, likewise for turing right
+            for _ in range(10000):
+                angle_current = self.imu_.angle()
+                print(angle_goal_left, '<', angle_current, '<', angle_goal_right)
+                if angle_current > angle_goal_left and angle_current > angle_goal_right:    # spin left if bigger than left and right limit
+                    self.spin_start(pwm_l, 50)
+                elif angle_current < angle_goal_left and angle_current < angle_goal_right:  # spin right if smaller than left and right limit
+                    self.spin_start(pwm_r, 50)
+                else:                                                                       # stop pin
+                    break
 
-        # send all pins low & cleanup
-        self.stop()
-        gpio.cleanup()
+            """stop spin"""
+            if pwm_l or pwm_r:
+                self.spin_end(pwm_l)
+                self.spin_end(pwm_r)
+
+            # send all pins low & cleanup
+            self.stop()
+            gpio.cleanup()
+            return True
+        except ArithmeticError:
+            # send all pins low & cleanup
+            self.stop()
+            gpio.cleanup()
+            return False
 
     def pivotleft(self, angle=30.0):
         self._init_ouput_pins()
@@ -295,7 +307,6 @@ class wheelControlled(wheel):
         # send all pins low & cleanup
         self.stop()
         gpio.cleanup()
-
 
     def pivotright(self, angle=30.0):
         self._init_ouput_pins()
