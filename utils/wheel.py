@@ -200,6 +200,66 @@ class wheelControlled(wheel):
         self.stop()
         gpio.cleanup()
 
+    def spin_left_init(self, duty_cycle=50):
+        self._init_ouput_pins()
+
+        # independent motor control via pwm, move forward with half speed
+        pwm_left = gpio.PWM(self._pin_in2, self.frequency)
+        pwm_right = gpio.PWM(self._pin_in3, self.frequency)
+
+        pwm_left.start(self.duty_cycle)
+        pwm_right.start(self.duty_cycle)
+        time.sleep(0.01)
+        return pwm_left, pwm_right
+
+    def spin_right_init(self, duty_cycle=50):
+        self._init_ouput_pins()
+
+        # independent motor control via pwm, move forward with half speed
+        pwm_left = gpio.PWM(self._pin_in2, self.frequency)
+        pwm_right = gpio.PWM(self._pin_in3, self.frequency)
+
+        pwm_left.start(self.duty_cycle)
+        pwm_right.start(self.duty_cycle)
+        time.sleep(0.01)
+        return pwm_left, pwm_right
+
+    def spin_end(self, pwm_left, pwm_right):
+        if pwm_left: pwm_left.stop()
+        if pwm_right: pwm_right.stop()
+        self.stop()
+        gpio.cleanup()
+
+    def turn(self, angle=0.0):
+        self._init_ouput_pins()
+
+        """measure the init orientation of robot"""
+        angle_init = self.imu_.angle()
+        angle_goal_left = ((angle_init - angle - self._tolerance) + 360.0) % 360.0  # left limit
+        angle_goal_right = max(((angle_init - angle + self._tolerance) + 360.0) % 360.0,
+                               angle_goal_left + 2 * self._tolerance)  # right limit
+        if 270.0 < angle_goal_left:
+            angle_goal_left -= 360.0
+
+        """start spin"""
+        pwm_left, pwm_right = None, None
+        for _ in range(10000):
+            angle_current = self.imu_.angle()
+            print(angle_goal_left, '<', angle_current, '<', angle_goal_right)
+            if angle_current > angle_goal_left and angle_current > angle_goal_right:    # spin left if bigger than left and right limit
+                pwm_left, pwm_right = self.spin_left_init(50)
+            elif angle_current < angle_goal_left and angle_current < angle_goal_right:  # spin right if smaller than left and right limit
+                pwm_left, pwm_right = self.spin_right_init(50)
+            else:                                                                       # stop pin
+                break
+        """stop spin"""
+        if pwm_right or pwm_left:
+            self.spin_end(pwm_left, pwm_right)
+
+        # send all pins low & cleanup
+        self.stop()
+        gpio.cleanup()
+
     def pivotleft(self, angle=30.0):
         self._init_ouput_pins()
         angle_init = self.imu_.angle()
@@ -210,8 +270,8 @@ class wheelControlled(wheel):
         # independent motor control via pwm, move forward with half speed
         pwm_front_left = gpio.PWM(self._pin_in2, self.frequency)
         pwm_back_right = gpio.PWM(self._pin_in3, self.frequency)
-        gpio.output(self._pin_in1, False)
-        gpio.output(self._pin_in4, False)
+        # gpio.output(self._pin_in1, False)
+        # gpio.output(self._pin_in4, False)
 
         pwm_front_left.start(self.duty_cycle)
         pwm_back_right.start(self.duty_cycle)
@@ -276,6 +336,18 @@ class wheelControlled(wheel):
             print('couldn\'t recognize ', key_press, ' please enter ', str(self._command_2_movement))
             return True
 
+    def read_user_input_then_turn_acoordingly(self):
+        key_press = input("Select driving mode: ")
+        if key_press == 'q':
+            return False
+        elif key_press == 't':
+            value = float(input("enter value for this move: distance in cm, angle in degree"))
+            self.turn(angle=value)
+            return True
+        else:
+            print('couldn\'t recognize ', key_press, ' please enter ', str(self._command_2_movement))
+            return True
+
 
 def main():
     driver = wheel()
@@ -289,7 +361,7 @@ def main():
     driver = wheelControlled()
     print('driving with distance start')
     while True:
-        if not driver.read_user_input_then_move_acoordingly():
+        if not driver.read_user_input_then_turn_acoordingly():
             break
     print('driving with distance done')
 
