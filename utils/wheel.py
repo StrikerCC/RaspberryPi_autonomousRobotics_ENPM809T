@@ -268,10 +268,9 @@ class wheelControlled(wheel):
 
                 print(angle_goal_left, '<', angle_current, '<', angle_goal_right)
                 if angle_current > angle_goal_left and angle_current > angle_goal_right:    # spin left if bigger than left and right limit
-                    self.spin_start(pwm_l, 50)
+                    self.spin_start(pwm_l, 90)
                 elif angle_current < angle_goal_left and angle_current < angle_goal_right:  # spin right if smaller than left and right limit
-                    continue
-                    self.spin_start(pwm_r, 50)
+                    self.spin_start(pwm_r, 90)
                 else:                                                                       # stop pin
                     break
 
@@ -281,7 +280,7 @@ class wheelControlled(wheel):
                 self.spin_end(pwm_r)
 
             # send all pins low & cleanup
-            self.stop()
+            # self.stop()
             gpio.cleanup()
             return True
         except ArithmeticError:
