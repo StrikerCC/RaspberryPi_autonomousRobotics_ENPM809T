@@ -228,7 +228,7 @@ class wheelControlled(wheel):
         pwm_left, pwm_right = pwm
         if pwm_left: pwm_left.stop()
         if pwm_right: pwm_right.stop()
-        self.stop()
+        # self.stop()
         gpio.cleanup()
 
     def turn(self, angle=0.0):
@@ -241,6 +241,8 @@ class wheelControlled(wheel):
         """
         """measure the init orientation of robot"""
         angle_init = self.imu_.angle()
+        if 270.0 < angle_init:
+            angle_init -= 360.0
 
         """make a range of target for desired robot orientation"""
         angle_goal_left = ((angle_init + angle - self._tolerance) + 360.0) % 360.0  # left limit
@@ -257,6 +259,9 @@ class wheelControlled(wheel):
             pwm_l, pwm_r = self.spin_init()     # start pwm_l to turn left, likewise for turing right
             for _ in range(10000):
                 angle_current = self.imu_.angle()
+                if 270.0 < angle_current:
+                    angle_current -= 360.0
+
                 print(angle_goal_left, '<', angle_current, '<', angle_goal_right)
                 if angle_current > angle_goal_left and angle_current > angle_goal_right:    # spin left if bigger than left and right limit
                     self.spin_start(pwm_l, 50)
