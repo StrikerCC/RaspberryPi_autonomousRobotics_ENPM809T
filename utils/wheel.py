@@ -249,12 +249,10 @@ class wheelControlled(wheel):
         """
         """measure the init orientation of robot"""
         angle_init = self.imu_.angle()
-        if 270.0 < angle_init:
-            angle_init -= 360.0
 
         """make a range of target for desired robot orientation"""
-        angle_goal_left = angle_init + angle
-        angle_goal_right = angle_init + angle
+        angle_goal_left = angle % 180.0
+        angle_goal_right = angle % 180.0
         if angle > 0.0:
             angle_goal_right += self._tolerance
         elif angle < 0.0:
@@ -263,30 +261,28 @@ class wheelControlled(wheel):
             angle_goal_left -= self._tolerance
             angle_goal_right += self._tolerance
 
-        angle_goal_left = (angle_goal_left + 360.0) % 360.0  # left limit
-        angle_goal_right = max((angle_goal_right + 360.0) % 360.0, angle_goal_right)  # right limit
+        # angle_goal_left = (angle_goal_left + 360.0) % 360.0  # left limit
+        # angle_goal_right = max((angle_goal_right + 360.0) % 360.0, angle_goal_right)  # right limit
 
-        if 270.0 < angle_goal_left:
-            angle_goal_left -= 360.0
-        if 270.0 < angle_goal_right:
-            angle_goal_right -= 360.0
+        # if 270.0 < angle_goal_left:
+        #     angle_goal_left -= 360.0
+        # if 270.0 < angle_goal_right:
+        #     angle_goal_right -= 360.0
 
-        print('turn from', angle_init, 'to between', angle_goal_left, 'and', angle_goal_right)
+        print('turn from', angle_init, 'to between', angle_init+angle_goal_left, 'and', angle_init+angle_goal_right)
         """start spin"""
         try:
             self._init_ouput_pins()
             pwm_l, pwm_r = self.spin_init()  # start pwm_l to turn left, likewise for turing right
             for _ in range(10000):
-                angle_current = self.imu_.angle()
-                if 270.0 < angle_current:
-                    angle_current -= 360.0
+                angle_current = self.imu_.angle() - angle_init
 
                 print(angle_goal_left, '<', angle_current, '<', angle_goal_right)
-                if angle_current > angle_goal_left and angle_current > angle_goal_right:  # spin left if bigger than left and right limit
+                if angle_current > angle_goal_left and angle_current > angle_goal_right:    # spin left if bigger than left and right limit
                     self.spin_start(pwm_l, 90)
                 elif angle_current < angle_goal_left and angle_current < angle_goal_right:  # spin right if smaller than left and right limit
                     self.spin_start(pwm_r, 90)
-                else:  # stop pin
+                else:                                                                       # stop pin
                     break
 
             """stop spin"""
