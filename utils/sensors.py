@@ -50,10 +50,12 @@ class encoder():
             if int(gpio.input(pin)) != int(button):
                 button = int(gpio.input(pin))
                 counter += 1
-            # print('encoder count to ', counter)
+
             if counter >= count_goal:
                 print('reach the goal count')
                 return True
+
+            print('encoder count to ', counter)
         return False
 
 

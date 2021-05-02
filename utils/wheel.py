@@ -247,6 +247,7 @@ class wheelControlled(wheel):
         :return:
         :rtype:
         """
+        angle = float(angle)
         """measure the init orientation of robot"""
         angle_init = self.imu_.angle()
         if 350.0 < angle_init:
@@ -292,9 +293,9 @@ class wheelControlled(wheel):
 
                 print(self.imu_.angle(), ':  ', angle_goal_left, '<', angle_current, '<', angle_goal_right)
                 if angle_current > angle_goal_left and angle_current > angle_goal_right:    # spin left if bigger than left and right limit
-                    self.spin_start(pwm_l, 90)
+                    self.spin_start(pwm_l, 40)
                 elif angle_current < angle_goal_left and angle_current < angle_goal_right:  # spin right if smaller than left and right limit
-                    self.spin_start(pwm_r, 90)
+                    self.spin_start(pwm_r, 40)
                 else:                                                                       # stop pin
                     break
 
