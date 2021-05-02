@@ -55,7 +55,7 @@ class encoder():
                 print('reach the goal count')
                 return True
 
-            print('encoder count to ', counter)
+            # print('encoder count to ', counter)
         return False
 
 

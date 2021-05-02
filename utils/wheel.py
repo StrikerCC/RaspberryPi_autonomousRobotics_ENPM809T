@@ -150,7 +150,7 @@ class wheelControlled(wheel):
         """motor control parameters for motor"""
         self.frequency = 10  # motor control frequency
         self.duty_cycle_translate = 50  # duty cycle to control motor effect voltage
-        self.duty_cycle_rotate = 40
+        self.duty_cycle_rotate = 20
         """motor control parameters for encoder"""
         self.meter_2_ticks = 98  # number of ticks per meter of travelling
         """motor control parameters for imu"""
@@ -294,8 +294,10 @@ class wheelControlled(wheel):
 
                 print(self.imu_.angle(), ':  ', angle_goal_left, '<', angle_current, '<', angle_goal_right)
                 if angle_current > angle_goal_left and angle_current > angle_goal_right:    # spin left if bigger than left and right limit
+                    self.spin_end(pwm_r)
                     self.spin_start(pwm_l, self.duty_cycle_rotate)
                 elif angle_current < angle_goal_left and angle_current < angle_goal_right:  # spin right if smaller than left and right limit
+                    self.spin_end(pwm_l)
                     self.spin_start(pwm_r, self.duty_cycle_rotate)
                 else:                                                                       # stop pin
                     break
