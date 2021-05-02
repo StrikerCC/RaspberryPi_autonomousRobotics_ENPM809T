@@ -269,6 +269,7 @@ class wheelControlled(wheel):
         if 270.0 < angle_goal_right:
             angle_goal_right -= 360.0
 
+        print('turn from', angle_init, 'to between', angle_goal_left, 'and', angle_goal_right)
         """start spin"""
         try:
             self._init_ouput_pins()
@@ -319,7 +320,7 @@ class wheelControlled(wheel):
         pwm_back_right.start(self.duty_cycle)
         time.sleep(0.01)
 
-        for _ in range(100):
+        for _ in range(1000):
             print(angle_goal_left, '<', self.imu_.angle(), '<', angle_goal_right)
             if angle_goal_left <= self.imu_.angle() <= angle_goal_right:
                 print('reach', self.imu_.angle())
@@ -353,7 +354,7 @@ class wheelControlled(wheel):
 
         time.sleep(0.01)
 
-        for _ in range(100):
+        for _ in range(1000):
             print(angle_goal_left, '<', self.imu_.angle(), '<', angle_goal_right)
             if angle_goal_left <= self.imu_.angle() <= angle_goal_right:
                 print(angle_init, 'to', angle_goal)
@@ -393,19 +394,25 @@ class wheelControlled(wheel):
         self._init_ouput_pins()
 
         """start transporting"""
+        print('moving to  area')
         self.forward(distance=side0)  # move forward side0
         self.turn(90)  # turn left 90
         self.forward(distance=side1)  # move forward side1
 
         """deliver vail"""
+        print('delivering injection vial')
 
         """go back"""
+        print('going back to storage area')
         self.turn(90)  # turn left 90
         self.forward(distance=side0)  # move forward side0
         self.turn(90)  # turn left 90
         self.forward(distance=side1)  # move forward side1
 
         """picking up"""
+        print('picking up')
+
+        """turn to transportation route"""
         self.turn(90)  # turn left 90
 
         return True
