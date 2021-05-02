@@ -64,41 +64,70 @@ def main():
         """hold on for emails"""
 
         """looking for and pick up vail according to command"""
+        print('aiming vail')
         camera_.view_some_frames(num_frames=8)
 
+        while True:
+            if not wheel_.read_user_input_then_move_acoordingly():
+                break
         # turn to the vial
         gripper_.open_for_vail()    # open gripper
+
+
         # move to the vail
+        print('moving to vail')
+        while True:
+            if not wheel_.read_user_input_then_move_acoordingly():
+                break
         gripper_.close_for_vail()   # close gripper to pick up
         # back up for same distance
-        # turn to direction for transportation
+        print('backing up with vail')
+        while True:
+            if not wheel_.read_user_input_then_move_acoordingly():
+                break
 
+        # turn to direction for transportation
+        print('turn to transportation')
+        while True:
+            if not wheel_.read_user_input_then_move_acoordingly():
+                break
 
         """start a transporting"""
         print('moving to injection area')
         wheel_.forward(distance=side0)  # move forward side0
-        wheel_.turn(90)  # turn left 90
+        wheel_.rotate(90)  # turn left 90
         wheel_.forward(distance=side1)  # move forward side1
 
         """deliver vail"""
         print('delivering injection vial')
         # move forward to injection area
+        while True:
+            if not wheel_.read_user_input_then_move_acoordingly():
+                break
+
         gripper_.open_for_vail()    # open gripper to put down vail
+
         # back up
+        print('backing up from vail')
+        while True:
+            if not wheel_.read_user_input_then_move_acoordingly():
+                break
+
         gripper_.close_for_vail()   # close gripper
 
         """go back"""
         print('going back to storage area')
-        wheel_.turn(90)  # turn left 90
+        wheel_.rotate(90)  # turn left 90
         wheel_.forward(distance=side0)  # move forward side0
-        wheel_.turn(90)  # turn left 90
+        wheel_.rotate(90)  # turn left 90
         wheel_.forward(distance=side1)  # move forward side1
 
         """picking up"""
         print('picking up again')
 
         """turn to transportation route"""
-        wheel_.turn(90)  # turn left 90
+        # print()
+        # wheel_.rotate(90)  # turn left 90
 
     return True
 

@@ -135,7 +135,7 @@ class wheelControlled(wheel):
             'w': self.forward,
             's': self.reverse,
             'r': self.rotate,
-            't': self.turn_to()
+            't': self.turn_to
         }
 
         self.path = {
