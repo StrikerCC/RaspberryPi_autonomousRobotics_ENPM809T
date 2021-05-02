@@ -44,7 +44,7 @@ class wheel():
 
     def shutdown(self):
         self.stop()
-        gpio.cleanup()
+        # gpio.cleanup()
 
     def forward(self, move_time=1):
         self._init_ouput_pins()
@@ -58,7 +58,7 @@ class wheel():
         time.sleep(move_time)
         # send all pins low & cleanup
         self.stop()
-        gpio.cleanup()
+        # gpio.cleanup()
 
     def reverse(self, move_time=1):
         self._init_ouput_pins()
@@ -72,7 +72,7 @@ class wheel():
         time.sleep(move_time)
         # send all pins low & cleanup
         self.stop()
-        gpio.cleanup()
+        # gpio.cleanup()
 
     def pivotleft(self, move_time=1):
         self._init_ouput_pins()
@@ -86,7 +86,7 @@ class wheel():
         time.sleep(move_time)
         # send all pins low & cleanup
         self.stop()
-        gpio.cleanup()
+        # gpio.cleanup()
 
     def pivotright(self, move_time=1):
         self._init_ouput_pins()
@@ -100,7 +100,7 @@ class wheel():
         time.sleep(move_time)
         # send all pins low & cleanup
         self.stop()
-        gpio.cleanup()
+        # gpio.cleanup()
 
     def __moveIt(self, direction):
         print("Key: ", direction)
@@ -416,7 +416,7 @@ class wheelControlled(wheel):
                 else:                                                                       # stop pin
                     self.spin_end(pwm_l)
                     self.spin_end(pwm_r)
-                    gpio.cleanup()
+                    # gpio.cleanup()
                     return True
 
             """stop spin"""
@@ -425,12 +425,12 @@ class wheelControlled(wheel):
                 self.spin_end(pwm_r)
 
             # send all pins low & cleanup
-            gpio.cleanup()
+            # gpio.cleanup()
             return True
         except ArithmeticError:
             # send all pins low & cleanup
             self.stop()
-            gpio.cleanup()
+            # gpio.cleanup()
             return False
 
     def read_user_input_then_move_acoordingly(self):

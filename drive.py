@@ -65,13 +65,14 @@ def main():
 
         """looking for and pick up vail according to command"""
         print('aiming vail')
-        camera_.view_some_frames(num_frames=8)
+        # camera_.view_some_frames(num_frames=8)
 
+        gripper_.open_for_vail()  # open gripper
         while True:
             if not wheel_.read_user_input_then_move_acoordingly():
                 break
         # turn to the vial
-        gripper_.open_for_vail()    # open gripper
+        # gripper_.open_for_vail()    # open gripper
 
 
         # move to the vail
