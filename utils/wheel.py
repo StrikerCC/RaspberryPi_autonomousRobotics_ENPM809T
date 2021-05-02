@@ -249,6 +249,8 @@ class wheelControlled(wheel):
         """
         """measure the init orientation of robot"""
         angle_init = self.imu_.angle()
+        if 350.0 < angle_init:
+            angle_init -= 350.0
 
         """make a range of target for desired robot orientation"""
         if -180.0 < angle < 180.0:
