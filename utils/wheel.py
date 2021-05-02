@@ -256,11 +256,11 @@ class wheelControlled(wheel):
         elif angle < 0.0:
             angle_goal_left -= self._tolerance
         else:
-            angle_goal_right += self._tolerance
             angle_goal_left -= self._tolerance
+            angle_goal_right += self._tolerance
 
-        angle_goal_left = ((angle_goal_left) + 360.0) % 360.0  # left limit
-        angle_goal_right = max((angle_goal_right + 360.0) % 360.0, angle_goal_left)  # right limit
+        angle_goal_left = (angle_goal_left + 360.0) % 360.0  # left limit
+        angle_goal_right = max((angle_goal_right + 360.0) % 360.0, angle_goal_right)  # right limit
 
         if 270.0 < angle_goal_left:
             angle_goal_left -= 360.0
@@ -380,7 +380,7 @@ class wheelControlled(wheel):
         if key_press == 'q':
             return False
         elif key_press == 't':
-            value = float(input("enter value for this move: distance in cm, angle in degree"))
+            value = float(input("enter value for this move: distance in cm, angle in degree "))
             self.turn(angle=value)
             return True
         else:
