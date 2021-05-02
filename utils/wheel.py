@@ -389,24 +389,24 @@ class wheelControlled(wheel):
             print('couldn\'t recognize ', key_press, ' please enter ', str(self._command_2_movement))
             return True
 
-    def rectangle(self, side0=1.0, side1=0.5):
+    def rectangle(self, side0=0.5, side1=0.25):
         self._init_ouput_pins()
 
         """start transporting"""
-        self.forward(side0)  # move forward side0
-        self.turn(-90)  # turn left 90
-        self.forward(side1)  # move forward side1
+        self.forward(distance=side0)  # move forward side0
+        self.turn(90)  # turn left 90
+        self.forward(distance=side1)  # move forward side1
 
         """deliver vail"""
 
         """go back"""
-        self.turn(-90)  # turn left 90
-        self.forward(side0)  # move forward side0
-        self.turn(-90)  # turn left 90
-        self.forward(side1)  # move forward side1
+        self.turn(90)  # turn left 90
+        self.forward(distance=side0)  # move forward side0
+        self.turn(90)  # turn left 90
+        self.forward(distance=side1)  # move forward side1
 
         """picking up"""
-        self.turn(-90)  # turn left 90
+        self.turn(90)  # turn left 90
 
         return True
 
