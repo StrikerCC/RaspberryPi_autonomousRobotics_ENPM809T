@@ -100,7 +100,7 @@ class imu():
                     # Read serial stream
                     line = self.ser.readline()
                     angle = self.__line_to_angle(line)
-                return angle
+                return float(angle)
 
 
     def reach(self, angle_goal):
@@ -134,7 +134,7 @@ class imu():
             line = float(line)
         except:
             print('cannot convert', line, 'to float')
-        return line
+        return float(line)
 
 if __name__ == '__main__':
     print('testing left encoder')

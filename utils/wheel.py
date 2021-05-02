@@ -149,7 +149,8 @@ class wheelControlled(wheel):
 
         """motor control parameters for motor"""
         self.frequency = 10  # motor control frequency
-        self.duty_cycle = 50  # duty cycle to control motor effect voltage
+        self.duty_cycle_translate = 50  # duty cycle to control motor effect voltage
+        self.duty_cycle_rotate = 40
         """motor control parameters for encoder"""
         self.meter_2_ticks = 98  # number of ticks per meter of travelling
         """motor control parameters for imu"""
@@ -176,8 +177,8 @@ class wheelControlled(wheel):
         # independent motor control via pwm, move forward with half speed
         pwm_front_left = gpio.PWM(self._pin_in1, self.frequency)
         pwm_back_right = gpio.PWM(self._pin_in3, self.frequency)
-        pwm_front_left.start(self.duty_cycle)
-        pwm_back_right.start(self.duty_cycle)
+        pwm_front_left.start(self.duty_cycle_translate)
+        pwm_back_right.start(self.duty_cycle_translate)
         time.sleep(0.01)
 
         if self.encoder_.reach('left', int(distance * self.meter_2_ticks)):
@@ -195,8 +196,8 @@ class wheelControlled(wheel):
         # independent motor control via pwm, move forward with half speed
         pwm_front_left = gpio.PWM(self._pin_in2, self.frequency)
         pwm_back_right = gpio.PWM(self._pin_in4, self.frequency)
-        pwm_front_left.start(self.duty_cycle)
-        pwm_back_right.start(self.duty_cycle)
+        pwm_front_left.start(self.duty_cycle_translate)
+        pwm_back_right.start(self.duty_cycle_translate)
         time.sleep(0.01)
 
         if self.encoder_.reach('left', int(distance * self.meter_2_ticks)):
@@ -293,9 +294,9 @@ class wheelControlled(wheel):
 
                 print(self.imu_.angle(), ':  ', angle_goal_left, '<', angle_current, '<', angle_goal_right)
                 if angle_current > angle_goal_left and angle_current > angle_goal_right:    # spin left if bigger than left and right limit
-                    self.spin_start(pwm_l, 40)
+                    self.spin_start(pwm_l, self.duty_cycle_rotate)
                 elif angle_current < angle_goal_left and angle_current < angle_goal_right:  # spin right if smaller than left and right limit
-                    self.spin_start(pwm_r, 40)
+                    self.spin_start(pwm_r, self.duty_cycle_rotate)
                 else:                                                                       # stop pin
                     break
 
@@ -328,8 +329,8 @@ class wheelControlled(wheel):
         # gpio.output(self._pin_in1, False)
         # gpio.output(self._pin_in4, False)
 
-        pwm_front_left.start(self.duty_cycle)
-        pwm_back_right.start(self.duty_cycle)
+        pwm_front_left.start(self.duty_cycle_translate)
+        pwm_back_right.start(self.duty_cycle_translate)
         time.sleep(0.01)
 
         for _ in range(1000):
@@ -359,8 +360,8 @@ class wheelControlled(wheel):
         # independent motor control via pwm, move forward with half speed
         pwm_front_left = gpio.PWM(self._pin_in1, self.frequency)
         pwm_back_right = gpio.PWM(self._pin_in4, self.frequency)
-        pwm_front_left.start(self.duty_cycle)
-        pwm_back_right.start(self.duty_cycle)
+        pwm_front_left.start(self.duty_cycle_translate)
+        pwm_back_right.start(self.duty_cycle_translate)
         gpio.output(self._pin_in2, False)
         gpio.output(self._pin_in3, False)
 
