@@ -430,13 +430,13 @@ class wheelControlled(wheel):
 
 
 def main():
-    driver = wheel()
-    print('driving with time start')
-    while True:
-        if not driver.read_user_input_then_move_acoordingly():
-            break
-    print('driving with time done')
-    driver.__del__()
+    # driver = wheel()
+    # print('driving with time start')
+    # while True:
+    #     if not driver.read_user_input_then_move_acoordingly():
+    #         break
+    # print('driving with time done')
+    # driver.__del__()
 
     driver = wheelControlled()
     print('driving with distance start')
@@ -445,6 +445,7 @@ def main():
             break
     print('driving with distance done')
     driver.rectangle()
+
 
 
 if __name__ == '__main__':

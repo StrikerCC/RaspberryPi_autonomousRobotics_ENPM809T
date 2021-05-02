@@ -16,6 +16,28 @@ from utils.ranger import sonar
 from utils.gripper import gripper
 
 
+vaccines = {   ### hsv filter for object
+    'J&J': {
+        'color': 'blue',
+        'low_limit': (91, 124, 88),
+        'up_limit': (108, 255, 255)
+    },
+    'MODERNA': {
+        'color': 'green',
+        'low_limit': (53, 61, 34),
+        'up_limit': (84, 255, 233)
+    },
+    'PFIZER': {
+        'color': 'red',
+        'low_limit': (153, 29, 125),
+        'up_limit': (183, 255, 255)
+    }
+}
+
+qrcode = {
+
+}
+
 def main():
     """video and image saving path"""
     path_ = './results/'
