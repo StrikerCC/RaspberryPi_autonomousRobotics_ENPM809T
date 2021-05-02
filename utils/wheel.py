@@ -173,7 +173,7 @@ class wheelControlled(wheel):
         super().stop()
 
     def forward(self, distance=1.0):
-        self._init_ouput_pins()
+        # self._init_ouput_pins()
         print('moving forward', distance)
 
         # independent motor control via pwm, move forward with half speed
@@ -398,7 +398,7 @@ class wheelControlled(wheel):
                     if abs(angle_diff-angle_goal_right) < limit_0:
                         duty_cycle = self.duty_cycle_rotate_slow
                     elif limit_0 <= abs(angle_diff-angle_goal_right) < limit_1:
-                        duty_cycle = self.duty_cycle_rotate_fast
+                        duty_cycle = self.duty_cycle_rotate_med
                     else:
                         duty_cycle = self.duty_cycle_rotate_fast
 
@@ -408,7 +408,7 @@ class wheelControlled(wheel):
                     if abs(angle_diff - angle_goal_left) < limit_0:
                         duty_cycle = self.duty_cycle_rotate_slow
                     elif limit_0 <= abs(angle_diff - angle_goal_left) < limit_1:
-                        duty_cycle = self.duty_cycle_rotate_fast
+                        duty_cycle = self.duty_cycle_rotate_med
                     else:
                         duty_cycle = self.duty_cycle_rotate_fast
 
@@ -432,82 +432,6 @@ class wheelControlled(wheel):
             self.stop()
             gpio.cleanup()
             return False
-
-    def pivotleft(self, angle=30.0):
-        self._init_ouput_pins()
-        angle_init = self.imu_.angle()
-        angle_goal_left = ((angle_init - angle - self._tolerance) + 360.0) % 360.0  # left limit
-        angle_goal_right = max(((angle_init - angle + self._tolerance) + 360.0) % 360.0,
-                               angle_goal_left + 2 * self._tolerance)  # right limit
-        print(angle_init, 'to range', angle_goal_left, angle_goal_right)
-
-        # independent motor control via pwm, move forward with half speed
-        pwm_front_left = gpio.PWM(self._pin_in2, self.frequency)
-        pwm_back_right = gpio.PWM(self._pin_in3, self.frequency)
-        # gpio.output(self._pin_in1, False)
-        # gpio.output(self._pin_in4, False)
-
-        pwm_front_left.start(self.duty_cycle_rotate_slow)
-        pwm_back_right.start(self.duty_cycle_rotate_slow)
-        time.sleep(0.01)
-
-        for _ in range(1000):
-            print(angle_goal_left, '<', self.imu_.angle(), '<', angle_goal_right)
-            if angle_goal_left <= self.imu_.angle() <= angle_goal_right:
-                print('reach', self.imu_.angle())
-                pwm_front_left.stop()
-                pwm_back_right.stop()
-                break
-        # send all pins low & cleanup
-        self.stop()
-        gpio.cleanup()
-
-    def pivotright(self, angle=30.0):
-        self._init_ouput_pins()
-        angle_init = self.imu_.angle()
-        angle_goal = angle_init + angle
-        print(angle_init, 'to', angle_goal)
-
-        self._init_ouput_pins()
-        angle_init = self.imu_.angle()
-        angle_goal_left = ((angle_init + angle - self._tolerance) + 360.0) % 360.0  # left limit
-        angle_goal_right = max(((angle_init + angle + self._tolerance) + 360.0) % 360.0,
-                               angle_goal_left + 2 * self._tolerance)  # right limit
-        print(angle_init, 'to range', angle_goal_left, angle_goal_right)
-
-        # independent motor control via pwm, move forward with half speed
-        pwm_front_left = gpio.PWM(self._pin_in1, self.frequency)
-        pwm_back_right = gpio.PWM(self._pin_in4, self.frequency)
-        pwm_front_left.start(self.duty_cycle_rotate_slow)
-        pwm_back_right.start(self.duty_cycle_rotate_slow)
-        gpio.output(self._pin_in2, False)
-        gpio.output(self._pin_in3, False)
-
-        time.sleep(0.01)
-
-        for _ in range(1000):
-            print(angle_goal_left, '<', self.imu_.angle(), '<', angle_goal_right)
-            if angle_goal_left <= self.imu_.angle() <= angle_goal_right:
-                print(angle_init, 'to', angle_goal)
-                print('reach', self.imu_.angle())
-                pwm_front_left.stop()
-                pwm_back_right.stop()
-                break
-            # send all pins low & cleanup
-        self.stop()
-        gpio.cleanup()
-
-    # def read_user_input_then_move_acoordingly(self):
-    #     key_press = input("Select driving mode: ")
-    #     if key_press == 'q':
-    #         return False
-    #     elif key_press in self._command_2_movement.keys():
-    #         value = float(input("enter value for this move: distance in cm, angle in degree"))
-    #         self.__moveIt(direction=key_press, value=value)
-    #         return True
-    #     else:
-    #         print('couldn\'t recognize ', key_press, ' please enter ', str(self._command_2_movement))
-    #         return True
 
     def read_user_input_then_move_acoordingly(self):
         key_press = input("Select driving mode: ")
@@ -571,17 +495,87 @@ def main():
         if not driver.read_user_input_then_move_acoordingly():
             break
     print('driving with time done')
-    driver.__del__()
 
-    driver = wheelControlled()
-    print('driving with distance start')
-    while True:
-        if not driver.read_user_input_then_turn_acoordingly():
-            break
-    print('driving with distance done')
     driver.rectangle()
-
 
 
 if __name__ == '__main__':
     main()
+
+
+
+    # def pivotleft(self, angle=30.0):
+    #     self._init_ouput_pins()
+    #     angle_init = self.imu_.angle()
+    #     angle_goal_left = ((angle_init - angle - self._tolerance) + 360.0) % 360.0  # left limit
+    #     angle_goal_right = max(((angle_init - angle + self._tolerance) + 360.0) % 360.0,
+    #                            angle_goal_left + 2 * self._tolerance)  # right limit
+    #     print(angle_init, 'to range', angle_goal_left, angle_goal_right)
+    #
+    #     # independent motor control via pwm, move forward with half speed
+    #     pwm_front_left = gpio.PWM(self._pin_in2, self.frequency)
+    #     pwm_back_right = gpio.PWM(self._pin_in3, self.frequency)
+    #     # gpio.output(self._pin_in1, False)
+    #     # gpio.output(self._pin_in4, False)
+    #
+    #     pwm_front_left.start(self.duty_cycle_rotate_slow)
+    #     pwm_back_right.start(self.duty_cycle_rotate_slow)
+    #     time.sleep(0.01)
+    #
+    #     for _ in range(1000):
+    #         print(angle_goal_left, '<', self.imu_.angle(), '<', angle_goal_right)
+    #         if angle_goal_left <= self.imu_.angle() <= angle_goal_right:
+    #             print('reach', self.imu_.angle())
+    #             pwm_front_left.stop()
+    #             pwm_back_right.stop()
+    #             break
+    #     # send all pins low & cleanup
+    #     self.stop()
+    #     gpio.cleanup()
+    #
+    # def pivotright(self, angle=30.0):
+    #     self._init_ouput_pins()
+    #     angle_init = self.imu_.angle()
+    #     angle_goal = angle_init + angle
+    #     print(angle_init, 'to', angle_goal)
+    #
+    #     self._init_ouput_pins()
+    #     angle_init = self.imu_.angle()
+    #     angle_goal_left = ((angle_init + angle - self._tolerance) + 360.0) % 360.0  # left limit
+    #     angle_goal_right = max(((angle_init + angle + self._tolerance) + 360.0) % 360.0,
+    #                            angle_goal_left + 2 * self._tolerance)  # right limit
+    #     print(angle_init, 'to range', angle_goal_left, angle_goal_right)
+    #
+    #     # independent motor control via pwm, move forward with half speed
+    #     pwm_front_left = gpio.PWM(self._pin_in1, self.frequency)
+    #     pwm_back_right = gpio.PWM(self._pin_in4, self.frequency)
+    #     pwm_front_left.start(self.duty_cycle_rotate_slow)
+    #     pwm_back_right.start(self.duty_cycle_rotate_slow)
+    #     gpio.output(self._pin_in2, False)
+    #     gpio.output(self._pin_in3, False)
+    #
+    #     time.sleep(0.01)
+    #
+    #     for _ in range(1000):
+    #         print(angle_goal_left, '<', self.imu_.angle(), '<', angle_goal_right)
+    #         if angle_goal_left <= self.imu_.angle() <= angle_goal_right:
+    #             print(angle_init, 'to', angle_goal)
+    #             print('reach', self.imu_.angle())
+    #             pwm_front_left.stop()
+    #             pwm_back_right.stop()
+    #             break
+    #         # send all pins low & cleanup
+    #     self.stop()
+    #     gpio.cleanup()
+
+    # def read_user_input_then_move_acoordingly(self):
+    #     key_press = input("Select driving mode: ")
+    #     if key_press == 'q':
+    #         return False
+    #     elif key_press in self._command_2_movement.keys():
+    #         value = float(input("enter value for this move: distance in cm, angle in degree"))
+    #         self.__moveIt(direction=key_press, value=value)
+    #         return True
+    #     else:
+    #         print('couldn\'t recognize ', key_press, ' please enter ', str(self._command_2_movement))
+    #         return True
