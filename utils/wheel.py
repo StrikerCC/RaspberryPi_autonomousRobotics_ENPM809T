@@ -389,6 +389,19 @@ class wheelControlled(wheel):
             print('couldn\'t recognize ', key_press, ' please enter ', str(self._command_2_movement))
             return True
 
+    def read_user_input_then_move_acoordingly(self):
+        key_press = input("Select driving mode: ")
+        if key_press == 'q':
+            return False
+        elif key_press in self._command_2_movement.keys():
+            value = float(input("enter value for this move: distance in cm, angle in degree"))
+            self.move(direction=key_press, value=value)
+            return True
+        else:
+            print('couldn\'t recognize ', key_press, ' please enter ', str(self._command_2_movement))
+            return True
+
+
     def read_user_input_then_turn_acoordingly(self):
         key_press = input("Select driving mode: ")
         if key_press == 'q':
@@ -430,13 +443,13 @@ class wheelControlled(wheel):
 
 
 def main():
-    # driver = wheel()
-    # print('driving with time start')
-    # while True:
-    #     if not driver.read_user_input_then_move_acoordingly():
-    #         break
-    # print('driving with time done')
-    # driver.__del__()
+    driver = wheelControlled()
+    print('driving with time start')
+    while True:
+        if not driver.read_user_input_then_move_acoordingly():
+            break
+    print('driving with time done')
+    driver.__del__()
 
     driver = wheelControlled()
     print('driving with distance start')
