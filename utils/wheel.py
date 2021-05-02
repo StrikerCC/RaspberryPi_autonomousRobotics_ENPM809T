@@ -171,6 +171,7 @@ class wheelControlled(wheel):
 
     def forward(self, distance=1.0):
         self._init_ouput_pins()
+        print('moving forward', distance)
 
         # independent motor control via pwm, move forward with half speed
         pwm_front_left = gpio.PWM(self._pin_in1, self.frequency)
@@ -189,6 +190,7 @@ class wheelControlled(wheel):
 
     def reverse(self, distance=1.0):
         self._init_ouput_pins()
+        print('moving backward', distance)
 
         # independent motor control via pwm, move forward with half speed
         pwm_front_left = gpio.PWM(self._pin_in2, self.frequency)
