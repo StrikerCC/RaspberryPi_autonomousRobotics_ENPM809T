@@ -286,7 +286,7 @@ class wheelControlled(wheel):
             self._init_ouput_pins()
             pwm_l, pwm_r = self.spin_init()  # start pwm_l to turn left, likewise for turing right
             angle_diff = 0.001
-
+            rotated = False
             for _ in range(10000):
                 angle_current = self.imu_.angle()
                 if angle_current:
@@ -300,10 +300,17 @@ class wheelControlled(wheel):
 
                 print(self.imu_.angle(), ':  ', angle_goal_left, '<', angle_diff, '<', angle_goal_right)
                 if angle_diff > angle_goal_left and angle_diff > angle_goal_right:    # spin left if bigger than left and right limit
-                    self.spin_end(pwm_r)
+                    # self.spin_end(pwm_r)
+                    # if rotated:
+                    #     self.spin_end(pwm_r)
+                    #     pwm_l, pwm_r = self.spin_init()
                     self.spin_start(pwm_l, self.duty_cycle_rotate)
+
                 elif angle_diff < angle_goal_left and angle_diff < angle_goal_right:  # spin right if smaller than left and right limit
-                    self.spin_end(pwm_l)
+                    # self.spin_end(pwm_l)
+                    # if rotated:
+                    #     self.spin_end(pwm_l)
+                    #     pwm_l, pwm_r = self.spin_init()
                     self.spin_start(pwm_r, self.duty_cycle_rotate)
                 else:                                                                       # stop pin
                     break
@@ -337,8 +344,8 @@ class wheelControlled(wheel):
         # gpio.output(self._pin_in1, False)
         # gpio.output(self._pin_in4, False)
 
-        pwm_front_left.start(self.duty_cycle_translate)
-        pwm_back_right.start(self.duty_cycle_translate)
+        pwm_front_left.start(self.duty_cycle_rotate)
+        pwm_back_right.start(self.duty_cycle_rotate)
         time.sleep(0.01)
 
         for _ in range(1000):
@@ -368,8 +375,8 @@ class wheelControlled(wheel):
         # independent motor control via pwm, move forward with half speed
         pwm_front_left = gpio.PWM(self._pin_in1, self.frequency)
         pwm_back_right = gpio.PWM(self._pin_in4, self.frequency)
-        pwm_front_left.start(self.duty_cycle_translate)
-        pwm_back_right.start(self.duty_cycle_translate)
+        pwm_front_left.start(self.duty_cycle_rotate)
+        pwm_back_right.start(self.duty_cycle_rotate)
         gpio.output(self._pin_in2, False)
         gpio.output(self._pin_in3, False)
 

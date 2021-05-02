@@ -67,10 +67,12 @@ class imu():
         self.port = '/dev/ttyUSB0'
         self.ser = serial.Serial(self.port, 9600)
         
-        print('waiting for imu to respound')
+        print('waiting for imu to respond')
         while True:
             if self.ser.in_waiting > 0:
-                print('imu ok', self.ser.readline())
+                print('imu ok, read \n', self.ser.readline())
+                for i in range(5):  # keep reading 5 imu output
+                    print(self.ser.readline())
                 break
        
     def __init__serial(self):
