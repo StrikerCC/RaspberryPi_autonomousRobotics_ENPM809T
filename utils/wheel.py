@@ -134,8 +134,8 @@ class wheelControlled(wheel):
         self._command_2_movement = {  # user input to drive wheel around
             'w': self.forward,
             's': self.reverse,
-            't': self.turn,
-            # 'd': self.pivotright
+            'r': self.rotate,
+            't': self.turn_to()
         }
 
         self.path = {
@@ -189,7 +189,7 @@ class wheelControlled(wheel):
             print('moved forward', distance)
         # send all pins low & cleanup
         self.stop()
-        gpio.cleanup()
+        # gpio.cleanup()
 
     def reverse(self, distance=1.0):
         # self._init_ouput_pins()
@@ -208,7 +208,7 @@ class wheelControlled(wheel):
             print('moved backward', distance)
         # send all pins low & cleanup
         self.stop()
-        gpio.cleanup()
+        # gpio.cleanup()
 
     def spin_start(self, pwm, duty_cycle=10):
         """
@@ -240,7 +240,7 @@ class wheelControlled(wheel):
         if pwm_right: pwm_right.stop()
         # self.stop()
 
-        gpio.cleanup()
+        # gpio.cleanup()
 
     def turn_to(self, angle=0.0):
         angle = float(angle)
@@ -313,7 +313,7 @@ class wheelControlled(wheel):
                 else:  # stop pin
                     self.spin_end(pwm_l)
                     self.spin_end(pwm_r)
-                    gpio.cleanup()
+                    # gpio.cleanup()
                     return True
 
             """stop spin"""
@@ -322,15 +322,15 @@ class wheelControlled(wheel):
                 self.spin_end(pwm_r)
 
             # send all pins low & cleanup
-            gpio.cleanup()
+            # gpio.cleanup()
             return True
         except ArithmeticError:
             # send all pins low & cleanup
             self.stop()
-            gpio.cleanup()
+            # gpio.cleanup()
             return False
 
-    def turn(self, angle=0.0):
+    def rotate(self, angle=0.0):
         """
         turn the robot a specific angle
         :param angle:
@@ -445,26 +445,13 @@ class wheelControlled(wheel):
             print('couldn\'t recognize ', key_press, ' please enter ', str(self._command_2_movement))
             return True
 
-
-    def read_user_input_then_turn_acoordingly(self):
-        key_press = input("Select driving mode: ")
-        if key_press == 'q':
-            return False
-        elif key_press == 't':
-            value = float(input("enter value for this move: distance in cm, angle in degree "))
-            self.turn(angle=value)
-            return True
-        else:
-            print('couldn\'t recognize ', key_press, ' please enter ', str(self._command_2_movement))
-            return True
-
-    def rectangle(self, side0=1, side1=0.5):
+    def rectangle(self, side0=0.5, side1=0.25):
         self._init_ouput_pins()
 
         """start transporting"""
         print('moving to injection area')
         self.forward(distance=side0)  # move forward side0
-        self.turn(90)  # turn left 90
+        self.rotate(90)  # turn left 90
         self.forward(distance=side1)  # move forward side1
 
         """deliver vail"""
@@ -472,16 +459,16 @@ class wheelControlled(wheel):
 
         """go back"""
         print('going back to storage area')
-        self.turn(90)  # turn left 90
+        self.rotate(90)  # turn left 90
         self.forward(distance=side0)  # move forward side0
-        self.turn(90)  # turn left 90
+        self.rotate(90)  # turn left 90
         self.forward(distance=side1)  # move forward side1
 
         """picking up"""
         print('picking up')
 
         """turn to transportation route"""
-        self.turn(90)  # turn left 90
+        self.rotate(90)  # turn left 90
 
         return True
 
