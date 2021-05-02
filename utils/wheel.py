@@ -182,6 +182,7 @@ class wheelControlled(wheel):
         if self.encoder_.reach('left', int(distance * self.meter_2_ticks)):
             pwm_front_left.stop()
             pwm_back_right.stop()
+            print('moved forward', distance)
         # send all pins low & cleanup
         self.stop()
         gpio.cleanup()
@@ -199,6 +200,7 @@ class wheelControlled(wheel):
         if self.encoder_.reach('left', int(distance * self.meter_2_ticks)):
             pwm_front_left.stop()
             pwm_back_right.stop()
+            print('moved backward', distance)
         # send all pins low & cleanup
         self.stop()
         gpio.cleanup()
