@@ -387,7 +387,7 @@ class wheelControlled(wheel):
             print('couldn\'t recognize ', key_press, ' please enter ', str(self._command_2_movement))
             return True
 
-    def rectangle(self, side0=2.0, side1=0.5):
+    def rectangle(self, side0=1.0, side1=0.5):
         self._init_ouput_pins()
 
         """start transporting"""
