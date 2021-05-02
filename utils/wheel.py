@@ -150,8 +150,9 @@ class wheelControlled(wheel):
         """motor control parameters for motor"""
         self.frequency = 10  # motor control frequency
         self.duty_cycle_translate = 50  # duty cycle to control motor effect voltage
-        self.duty_cycle_rotate_slow = 20
-        self.duty_cycle_rotate_fast = 40
+        self.duty_cycle_rotate_slow = 10
+        self.duty_cycle_rotate_med = 15
+        self.duty_cycle_rotate_fast = 30
         """motor control parameters for encoder"""
         self.meter_2_ticks = 98  # number of ticks per meter of travelling
         """motor control parameters for imu"""
@@ -209,7 +210,7 @@ class wheelControlled(wheel):
         self.stop()
         gpio.cleanup()
 
-    def spin_start(self, pwm, duty_cycle=50):
+    def spin_start(self, pwm, duty_cycle=10):
         """
         start pwm signal to preset pins
         :param pwm:
@@ -240,6 +241,94 @@ class wheelControlled(wheel):
         # self.stop()
 
         gpio.cleanup()
+
+    def turn_to(self, angle=0.0):
+        angle = float(angle)
+        """measure the init orientation of robot"""
+        angle_init = self.imu_.angle()
+        if 350.0 < angle_init:
+            angle_init -= 360.0
+
+        """make a range of target for desired robot orientation"""
+        if -180.0 < angle < 180.0:
+            angle = angle
+        elif angle > 180.0:
+            angle = 360.0 - angle
+        elif angle < -180.0:
+            angle = 360.0 + angle
+
+        angle_goal_left = 0
+        angle_goal_right = 0
+        if angle > 0.0:
+            angle_goal_right += self._tolerance
+        elif angle < 0.0:
+            angle_goal_left -= self._tolerance
+        else:
+            angle_goal_left -= self._tolerance
+            angle_goal_right += self._tolerance
+
+        print('turn from', angle_init, 'to between', angle_init + angle_goal_left, 'and', angle_init + angle_goal_right)
+        """start spin"""
+        try:
+            self._init_ouput_pins()
+            pwm_l, pwm_r = self.spin_init()  # start pwm_l to turn left, likewise for turing right
+            angle_diff = 0.001
+            limit_0 = 10.0  # degree
+            limit_1 = 20.0  # degree
+            duty_cycle = self.duty_cycle_rotate_slow
+
+            for _ in range(360):
+                angle_current = self.imu_.angle()
+                if angle_current:
+                    angle_diff = angle_current - angle_init
+                else:
+                    print('cannot read form imu')
+                if 180.0 < angle_diff:
+                    angle_diff -= 360.0
+                if -180.0 > angle_diff:
+                    angle_diff += 360.0
+
+                print(self.imu_.angle(), ':  duty cycle-', duty_cycle, 'angle-', angle_goal_left, '<', angle_diff, '<',
+                      angle_goal_right)
+                if angle_diff > angle_goal_left and angle_diff > angle_goal_right:  # spin left if bigger than left and right limit
+                    """adjust duty cycle according to distance away from goal"""
+                    if abs(angle_diff - angle_goal_right) < limit_0:
+                        duty_cycle = self.duty_cycle_rotate_slow
+                    elif limit_0 <= abs(angle_diff - angle_goal_right) < limit_1:
+                        duty_cycle = self.duty_cycle_rotate_fast
+                    else:
+                        duty_cycle = self.duty_cycle_rotate_fast
+
+                    self.spin_start(pwm_l, duty_cycle=duty_cycle)
+
+                elif angle_diff < angle_goal_left and angle_diff < angle_goal_right:  # spin right if smaller than left and right limit
+                    if abs(angle_diff - angle_goal_left) < limit_0:
+                        duty_cycle = self.duty_cycle_rotate_slow
+                    elif limit_0 <= abs(angle_diff - angle_goal_left) < limit_1:
+                        duty_cycle = self.duty_cycle_rotate_fast
+                    else:
+                        duty_cycle = self.duty_cycle_rotate_fast
+
+                    self.spin_start(pwm_r, duty_cycle=duty_cycle)
+                else:  # stop pin
+                    self.spin_end(pwm_l)
+                    self.spin_end(pwm_r)
+                    gpio.cleanup()
+                    return True
+
+            """stop spin"""
+            if pwm_l or pwm_r:
+                self.spin_end(pwm_l)
+                self.spin_end(pwm_r)
+
+            # send all pins low & cleanup
+            gpio.cleanup()
+            return True
+        except ArithmeticError:
+            # send all pins low & cleanup
+            self.stop()
+            gpio.cleanup()
+            return False
 
     def turn(self, angle=0.0):
         """
@@ -287,8 +376,12 @@ class wheelControlled(wheel):
             self._init_ouput_pins()
             pwm_l, pwm_r = self.spin_init()  # start pwm_l to turn left, likewise for turing right
             angle_diff = 0.001
-            rotated = False
-            for _ in range(10000):
+            limit_0 = 10.0  # degree
+            limit_1 = 15.0  # degree
+            duty_cycle = self.duty_cycle_rotate_slow
+            inplace = False
+
+            for _ in range(360):
                 angle_current = self.imu_.angle()
                 if angle_current:
                     angle_diff = angle_current - angle_init
@@ -299,14 +392,12 @@ class wheelControlled(wheel):
                 if -180.0 > angle_diff:
                     angle_diff += 360.0
 
-                limit = 10.0      # degree
-                duty_cycle = self.duty_cycle_rotate_slow
                 print(self.imu_.angle(), ':  duty cycle-', duty_cycle, 'angle-', angle_goal_left, '<', angle_diff, '<', angle_goal_right)
                 if angle_diff > angle_goal_left and angle_diff > angle_goal_right:          # spin left if bigger than left and right limit
                     """adjust duty cycle according to distance away from goal"""
-                    if abs(angle_diff-angle_goal_right) < limit:
+                    if abs(angle_diff-angle_goal_right) < limit_0:
                         duty_cycle = self.duty_cycle_rotate_slow
-                    elif limit <= abs(angle_diff-angle_goal_right):
+                    elif limit_0 <= abs(angle_diff-angle_goal_right) < limit_1:
                         duty_cycle = self.duty_cycle_rotate_fast
                     else:
                         duty_cycle = self.duty_cycle_rotate_fast
@@ -314,16 +405,19 @@ class wheelControlled(wheel):
                     self.spin_start(pwm_l, duty_cycle=duty_cycle)
 
                 elif angle_diff < angle_goal_left and angle_diff < angle_goal_right:        # spin right if smaller than left and right limit
-                    if abs(angle_diff - angle_goal_left) < limit:
+                    if abs(angle_diff - angle_goal_left) < limit_0:
                         duty_cycle = self.duty_cycle_rotate_slow
-                    elif limit <= abs(angle_diff - angle_goal_left):
+                    elif limit_0 <= abs(angle_diff - angle_goal_left) < limit_1:
                         duty_cycle = self.duty_cycle_rotate_fast
                     else:
                         duty_cycle = self.duty_cycle_rotate_fast
 
                     self.spin_start(pwm_r, duty_cycle=duty_cycle)
                 else:                                                                       # stop pin
-                    break
+                    self.spin_end(pwm_l)
+                    self.spin_end(pwm_r)
+                    gpio.cleanup()
+                    return True
 
             """stop spin"""
             if pwm_l or pwm_r:
@@ -331,7 +425,6 @@ class wheelControlled(wheel):
                 self.spin_end(pwm_r)
 
             # send all pins low & cleanup
-            # self.stop()
             gpio.cleanup()
             return True
         except ArithmeticError:
