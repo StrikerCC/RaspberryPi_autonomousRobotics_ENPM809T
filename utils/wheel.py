@@ -394,7 +394,7 @@ class wheelControlled(wheel):
         self._init_ouput_pins()
 
         """start transporting"""
-        print('moving to  area')
+        print('moving to injection area')
         self.forward(distance=side0)  # move forward side0
         self.turn(90)  # turn left 90
         self.forward(distance=side1)  # move forward side1
