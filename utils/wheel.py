@@ -134,8 +134,8 @@ class wheelControlled(wheel):
         self._command_2_movement = {  # user input to drive wheel around
             'w': self.forward,
             's': self.reverse,
-            'a': self.pivotleft,
-            'd': self.pivotright
+            't': self.turn,
+            # 'd': self.pivotright
         }
 
         self.path = {
