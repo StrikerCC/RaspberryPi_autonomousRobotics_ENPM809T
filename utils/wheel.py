@@ -250,7 +250,7 @@ class wheelControlled(wheel):
         """measure the init orientation of robot"""
         angle_init = self.imu_.angle()
         if 350.0 < angle_init:
-            angle_init -= 350.0
+            angle_init -= 360.0
 
         """make a range of target for desired robot orientation"""
         if -180.0 < angle < 180.0:
@@ -285,7 +285,8 @@ class wheelControlled(wheel):
             pwm_l, pwm_r = self.spin_init()  # start pwm_l to turn left, likewise for turing right
             for _ in range(10000):
                 angle_current = self.imu_.angle() - angle_init
-
+                if 180.0 < angle_current:
+                    angle_current -= 360.0
                 print(angle_goal_left, '<', angle_current, '<', angle_goal_right)
                 if angle_current > angle_goal_left and angle_current > angle_goal_right:    # spin left if bigger than left and right limit
                     self.spin_start(pwm_l, 90)
