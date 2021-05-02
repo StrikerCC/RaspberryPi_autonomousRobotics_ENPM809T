@@ -377,17 +377,17 @@ class wheelControlled(wheel):
         self.stop()
         gpio.cleanup()
 
-    def read_user_input_then_move_acoordingly(self):
-        key_press = input("Select driving mode: ")
-        if key_press == 'q':
-            return False
-        elif key_press in self._command_2_movement.keys():
-            value = float(input("enter value for this move: distance in cm, angle in degree"))
-            self.__moveIt(direction=key_press, value=value)
-            return True
-        else:
-            print('couldn\'t recognize ', key_press, ' please enter ', str(self._command_2_movement))
-            return True
+    # def read_user_input_then_move_acoordingly(self):
+    #     key_press = input("Select driving mode: ")
+    #     if key_press == 'q':
+    #         return False
+    #     elif key_press in self._command_2_movement.keys():
+    #         value = float(input("enter value for this move: distance in cm, angle in degree"))
+    #         self.__moveIt(direction=key_press, value=value)
+    #         return True
+    #     else:
+    #         print('couldn\'t recognize ', key_press, ' please enter ', str(self._command_2_movement))
+    #         return True
 
     def read_user_input_then_move_acoordingly(self):
         key_press = input("Select driving mode: ")
@@ -395,7 +395,7 @@ class wheelControlled(wheel):
             return False
         elif key_press in self._command_2_movement.keys():
             value = float(input("enter value for this move: distance in cm, angle in degree"))
-            self.move(direction=key_press, value=value)
+            self.__moveIt(direction=key_press, value=value)
             return True
         else:
             print('couldn\'t recognize ', key_press, ' please enter ', str(self._command_2_movement))
@@ -443,6 +443,8 @@ class wheelControlled(wheel):
 
 
 def main():
+    # driver = wheel()
+
     driver = wheelControlled()
     print('driving with time start')
     while True:
