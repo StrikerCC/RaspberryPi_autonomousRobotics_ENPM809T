@@ -299,12 +299,14 @@ class wheelControlled(wheel):
                 if -180.0 > angle_diff:
                     angle_diff += 360.0
 
-                print(self.imu_.angle(), ':  ', angle_goal_left, '<', angle_diff, '<', angle_goal_right)
+                limit = 10.0      # degree
+                duty_cycle = self.duty_cycle_rotate_slow
+                print(self.imu_.angle(), ':  duty cycle-', duty_cycle, 'angle-', angle_goal_left, '<', angle_diff, '<', angle_goal_right)
                 if angle_diff > angle_goal_left and angle_diff > angle_goal_right:          # spin left if bigger than left and right limit
-                    duty_cycle = self.duty_cycle_rotate_slow
-                    if abs(angle_diff-angle_goal_right) < 5:
+                    """adjust duty cycle according to distance away from goal"""
+                    if abs(angle_diff-angle_goal_right) < limit:
                         duty_cycle = self.duty_cycle_rotate_slow
-                    elif 5 < abs(angle_diff-angle_goal_right):
+                    elif limit <= abs(angle_diff-angle_goal_right):
                         duty_cycle = self.duty_cycle_rotate_fast
                     else:
                         duty_cycle = self.duty_cycle_rotate_fast
@@ -312,10 +314,9 @@ class wheelControlled(wheel):
                     self.spin_start(pwm_l, duty_cycle=duty_cycle)
 
                 elif angle_diff < angle_goal_left and angle_diff < angle_goal_right:        # spin right if smaller than left and right limit
-                    duty_cycle = self.duty_cycle_rotate_slow
-                    if abs(angle_diff - angle_goal_left) < 5:
+                    if abs(angle_diff - angle_goal_left) < limit:
                         duty_cycle = self.duty_cycle_rotate_slow
-                    elif 5 < abs(angle_diff - angle_goal_left):
+                    elif limit <= abs(angle_diff - angle_goal_left):
                         duty_cycle = self.duty_cycle_rotate_fast
                     else:
                         duty_cycle = self.duty_cycle_rotate_fast
