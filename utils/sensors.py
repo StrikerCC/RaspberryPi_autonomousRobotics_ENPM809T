@@ -7,6 +7,7 @@ import serial
 class encoder():
     def __init__(self):
         self.pin_left_encoder_pin, self.pin_right_encoder_pin = 7, 12
+        self.meter_2_count = 96
 
     def __pins_init(self):
         gpio.setmode(gpio.BOARD)
@@ -55,7 +56,8 @@ class encoder():
                 print('reach the goal count')
                 return True
 
-            # print('encoder count to ', counter)
+            if counter % self.meter_2_count:
+                print('encoder count to ', counter)
         return False
 
 
@@ -96,11 +98,11 @@ class imu():
         while True:
             if self.ser.in_waiting > 0:
                 angle = 0.0
-                for _ in range(5):
+                for _ in range(3):
                     # Read serial stream
                     line = self.ser.readline()
                     angle = self.__line_to_angle(line)
-                return float(angle)
+                return angle
 
 
     def reach(self, angle_goal):
@@ -134,7 +136,8 @@ class imu():
             line = float(line)
         except:
             print('cannot convert', line, 'to float')
-        return float(line)
+
+        return line if isinstance(line, float) else None
 
 if __name__ == '__main__':
     print('testing left encoder')

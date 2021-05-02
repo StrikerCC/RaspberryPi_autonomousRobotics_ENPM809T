@@ -285,18 +285,24 @@ class wheelControlled(wheel):
         try:
             self._init_ouput_pins()
             pwm_l, pwm_r = self.spin_init()  # start pwm_l to turn left, likewise for turing right
-            for _ in range(10000):
-                angle_current = self.imu_.angle() - angle_init
-                if 180.0 < angle_current:
-                    angle_current -= 360.0
-                if -180.0 > angle_current:
-                    angle_current += 360.0
+            angle_diff = 0.001
 
-                print(self.imu_.angle(), ':  ', angle_goal_left, '<', angle_current, '<', angle_goal_right)
-                if angle_current > angle_goal_left and angle_current > angle_goal_right:    # spin left if bigger than left and right limit
+            for _ in range(10000):
+                angle_current = self.imu_.angle()
+                if angle_current:
+                    angle_diff = angle_current - angle_init
+                else:
+                    print('cannot read form imu')
+                if 180.0 < angle_diff:
+                    angle_diff -= 360.0
+                if -180.0 > angle_diff:
+                    angle_diff += 360.0
+
+                print(self.imu_.angle(), ':  ', angle_goal_left, '<', angle_diff, '<', angle_goal_right)
+                if angle_diff > angle_goal_left and angle_diff > angle_goal_right:    # spin left if bigger than left and right limit
                     self.spin_end(pwm_r)
                     self.spin_start(pwm_l, self.duty_cycle_rotate)
-                elif angle_current < angle_goal_left and angle_current < angle_goal_right:  # spin right if smaller than left and right limit
+                elif angle_diff < angle_goal_left and angle_diff < angle_goal_right:  # spin right if smaller than left and right limit
                     self.spin_end(pwm_l)
                     self.spin_start(pwm_r, self.duty_cycle_rotate)
                 else:                                                                       # stop pin
