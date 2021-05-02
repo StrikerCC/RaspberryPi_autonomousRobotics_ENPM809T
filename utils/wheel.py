@@ -150,7 +150,8 @@ class wheelControlled(wheel):
         """motor control parameters for motor"""
         self.frequency = 10  # motor control frequency
         self.duty_cycle_translate = 50  # duty cycle to control motor effect voltage
-        self.duty_cycle_rotate = 40
+        self.duty_cycle_rotate_slow = 20
+        self.duty_cycle_rotate_fast = 40
         """motor control parameters for encoder"""
         self.meter_2_ticks = 98  # number of ticks per meter of travelling
         """motor control parameters for imu"""
@@ -299,19 +300,27 @@ class wheelControlled(wheel):
                     angle_diff += 360.0
 
                 print(self.imu_.angle(), ':  ', angle_goal_left, '<', angle_diff, '<', angle_goal_right)
-                if angle_diff > angle_goal_left and angle_diff > angle_goal_right:    # spin left if bigger than left and right limit
-                    # self.spin_end(pwm_r)
-                    # if rotated:
-                    #     self.spin_end(pwm_r)
-                    #     pwm_l, pwm_r = self.spin_init()
-                    self.spin_start(pwm_l, self.duty_cycle_rotate)
+                if angle_diff > angle_goal_left and angle_diff > angle_goal_right:          # spin left if bigger than left and right limit
+                    duty_cycle = self.duty_cycle_rotate_slow
+                    if abs(angle_diff-angle_goal_right) < 5:
+                        duty_cycle = self.duty_cycle_rotate_slow
+                    elif 5 < abs(angle_diff-angle_goal_right):
+                        duty_cycle = self.duty_cycle_rotate_fast
+                    else:
+                        duty_cycle = self.duty_cycle_rotate_fast
 
-                elif angle_diff < angle_goal_left and angle_diff < angle_goal_right:  # spin right if smaller than left and right limit
-                    # self.spin_end(pwm_l)
-                    # if rotated:
-                    #     self.spin_end(pwm_l)
-                    #     pwm_l, pwm_r = self.spin_init()
-                    self.spin_start(pwm_r, self.duty_cycle_rotate)
+                    self.spin_start(pwm_l, duty_cycle=duty_cycle)
+
+                elif angle_diff < angle_goal_left and angle_diff < angle_goal_right:        # spin right if smaller than left and right limit
+                    duty_cycle = self.duty_cycle_rotate_slow
+                    if abs(angle_diff - angle_goal_left) < 5:
+                        duty_cycle = self.duty_cycle_rotate_slow
+                    elif 5 < abs(angle_diff - angle_goal_left):
+                        duty_cycle = self.duty_cycle_rotate_fast
+                    else:
+                        duty_cycle = self.duty_cycle_rotate_fast
+
+                    self.spin_start(pwm_r, duty_cycle=duty_cycle)
                 else:                                                                       # stop pin
                     break
 
@@ -344,8 +353,8 @@ class wheelControlled(wheel):
         # gpio.output(self._pin_in1, False)
         # gpio.output(self._pin_in4, False)
 
-        pwm_front_left.start(self.duty_cycle_rotate)
-        pwm_back_right.start(self.duty_cycle_rotate)
+        pwm_front_left.start(self.duty_cycle_rotate_slow)
+        pwm_back_right.start(self.duty_cycle_rotate_slow)
         time.sleep(0.01)
 
         for _ in range(1000):
@@ -375,8 +384,8 @@ class wheelControlled(wheel):
         # independent motor control via pwm, move forward with half speed
         pwm_front_left = gpio.PWM(self._pin_in1, self.frequency)
         pwm_back_right = gpio.PWM(self._pin_in4, self.frequency)
-        pwm_front_left.start(self.duty_cycle_rotate)
-        pwm_back_right.start(self.duty_cycle_rotate)
+        pwm_front_left.start(self.duty_cycle_rotate_slow)
+        pwm_back_right.start(self.duty_cycle_rotate_slow)
         gpio.output(self._pin_in2, False)
         gpio.output(self._pin_in3, False)
 
@@ -431,7 +440,7 @@ class wheelControlled(wheel):
             print('couldn\'t recognize ', key_press, ' please enter ', str(self._command_2_movement))
             return True
 
-    def rectangle(self, side0=0.5, side1=0.25):
+    def rectangle(self, side0=1, side1=0.5):
         self._init_ouput_pins()
 
         """start transporting"""
