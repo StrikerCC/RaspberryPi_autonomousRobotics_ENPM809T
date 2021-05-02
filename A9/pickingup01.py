@@ -71,6 +71,7 @@ def rotate_to_object(wheel, angle):
         return True
     return False
 
+
 def move_to_object(wheel_, angle):
     assert -360.0 < angle < 360.0, 'cannot rotate ' + str(angle) + ' degree'
     for _ in range(1000):
@@ -79,6 +80,7 @@ def move_to_object(wheel_, angle):
         else:
             return True
     return False
+
 
 def main():
     """object color info"""

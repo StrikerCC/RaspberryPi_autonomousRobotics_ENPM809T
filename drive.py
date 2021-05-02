@@ -10,11 +10,13 @@
 '''
 
 # import lib
-from utils.wheel import wheel
+from utils.wheel import wheelControlled
 from utils.camera_pi import camera_pi, recorder
 from utils.ranger import sonar
 from utils.gripper import gripper
 
+command = 'chengc0611@gmail.com'
+# command = 'ENPM809TS19@gmail.com'
 
 vaccines = {   ### hsv filter for object
     'J&J': {
@@ -38,22 +40,67 @@ qrcode = {
 
 }
 
+"""video and image saving path"""
+path_ = './grand_results/'
+paths_img = [
+    path_ + 'vail.jpg',
+    path_ + 'qrcode.jpg',
+    path_ + 'arrow.jpg',
+    path_ + 'face.jpg'
+]
+
+
 def main():
-    """video and image saving path"""
-    path_ = './results/'
-    path_video = path_ + 'drive.avi'
-    path_img = path_ + 'drive.png'
-
     """operation classes"""
-    wheel_ = wheel()    # dynamic units
+    wheel_ = wheelControlled()    # dynamic units
     camera_ = camera_pi()  # perception units
+    gripper_ = gripper()
 
+    """field parameters"""
+    side0, side1 = 0.5, 0.25
 
     """go live"""
-    while True:
+    for i in range(3):
+        """hold on for emails"""
+
+        """looking for and pick up vail according to command"""
         camera_.view_some_frames(num_frames=8)
-        if not wheel_.read_user_input_then_move_acoordingly():   # break when user input q
-            break
+
+        # turn to the vial
+        gripper_.open_for_vail()    # open gripper
+        # move to the vail
+        gripper_.close_for_vail()   # close gripper to pick up
+        # back up for same distance
+        # turn to direction for transportation
+
+
+        """start a transporting"""
+        print('moving to injection area')
+        wheel_.forward(distance=side0)  # move forward side0
+        wheel_.turn(90)  # turn left 90
+        wheel_.forward(distance=side1)  # move forward side1
+
+        """deliver vail"""
+        print('delivering injection vial')
+        # move forward to injection area
+        gripper_.open_for_vail()    # open gripper to put down vail
+        # back up
+        gripper_.close_for_vail()   # close gripper
+
+        """go back"""
+        print('going back to storage area')
+        wheel_.turn(90)  # turn left 90
+        wheel_.forward(distance=side0)  # move forward side0
+        wheel_.turn(90)  # turn left 90
+        wheel_.forward(distance=side1)  # move forward side1
+
+        """picking up"""
+        print('picking up again')
+
+        """turn to transportation route"""
+        wheel_.turn(90)  # turn left 90
+
+    return True
 
 
 

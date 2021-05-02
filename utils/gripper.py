@@ -14,7 +14,7 @@ class gripper():
         self.pwm.stop()
         gpio.cleanup()
 
-    def open(self,percent):
+    def open(self, percent):
         # start from 0 to 100 percent, 0 is close, 100 is close
         if 0 <= percent <= 100: 
             duty_cycle = 0.75 * percent
@@ -30,7 +30,6 @@ class gripper():
         self.pwm.ChangeDutyCycle(i/10)
         time.sleep(0.1)
 
-
     def open_and_close(self):
         print('open and close')
         # move from close to open 
@@ -43,10 +42,24 @@ class gripper():
             self.pwm.ChangeDutyCycle(i/10)
             time.sleep(0.1)
 
+    def open_for_vail(self):
+        print('open gripper for vail')
+        for i in range(35, 70, 5):
+            self.pwm.ChangeDutyCycle(i/10)
+            time.sleep(0.1)
+
+    def close_for_vail(self):
+        print('open gripper for vail')
+        for i in range(70, 35, -5):
+            self.pwm.ChangeDutyCycle(i / 10)
+            time.sleep(0.1)
+
 
 def main():
     gripper_ = gripper()
-    gripper_.open_and_close() 
+    gripper_.open_for_vail()
+    time.sleep(3)
+    gripper_.close_for_vail()
 
 
 if __name__ == '__main__':
