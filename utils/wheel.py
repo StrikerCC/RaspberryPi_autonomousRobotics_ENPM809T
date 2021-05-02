@@ -5,7 +5,6 @@ import os
 
 sys.path.insert(0, os.path.dirname(os.getcwd()))
 
-
 from RaspberryPi_autonomousRobotics_ENPM809T.utils.sensors import encoder, imu
 
 
@@ -18,7 +17,7 @@ class wheel():
         self._pin_in4 = 35
         self._pin_in3 = 37
 
-        self._command_2_movement = {    # user input to drive wheel around
+        self._command_2_movement = {  # user input to drive wheel around
             'w': self.forward,
             's': self.reverse,
             'a': self.pivotleft,
@@ -31,13 +30,13 @@ class wheel():
 
     def _init_ouput_pins(self):
         gpio.setmode(gpio.BOARD)
-        gpio.setup(self._pin_in2, gpio.OUT)    # IN1
-        gpio.setup(self._pin_in1, gpio.OUT)    # IN2
-        gpio.setup(self._pin_in4, gpio.OUT)    # IN3
-        gpio.setup(self._pin_in3, gpio.OUT)    # IN4
+        gpio.setup(self._pin_in2, gpio.OUT)  # IN1
+        gpio.setup(self._pin_in1, gpio.OUT)  # IN2
+        gpio.setup(self._pin_in4, gpio.OUT)  # IN3
+        gpio.setup(self._pin_in3, gpio.OUT)  # IN4
 
     def stop(self):
-    # set all pins low
+        # set all pins low
         gpio.setup(self._pin_in1, False)
         gpio.setup(self._pin_in2, False)
         gpio.setup(self._pin_in3, False)
@@ -149,10 +148,10 @@ class wheelControlled(wheel):
         self.imu_ = imu()
 
         """motor control parameters for motor"""
-        self.frequency = 10     # motor control frequency
-        self.duty_cycle = 50    # duty cycle to control motor effect voltage
+        self.frequency = 10  # motor control frequency
+        self.duty_cycle = 50  # duty cycle to control motor effect voltage
         """motor control parameters for encoder"""
-        self.meter_2_ticks = 98 # number of ticks per meter of travelling
+        self.meter_2_ticks = 98  # number of ticks per meter of travelling
         """motor control parameters for imu"""
         self._tolerance = 2
 
@@ -180,7 +179,7 @@ class wheelControlled(wheel):
         pwm_back_right.start(self.duty_cycle)
         time.sleep(0.01)
 
-        if self.encoder_.reach('left', int(distance*self.meter_2_ticks)):
+        if self.encoder_.reach('left', int(distance * self.meter_2_ticks)):
             pwm_front_left.stop()
             pwm_back_right.stop()
         # send all pins low & cleanup
@@ -197,7 +196,7 @@ class wheelControlled(wheel):
         pwm_back_right.start(self.duty_cycle)
         time.sleep(0.01)
 
-        if self.encoder_.reach('left', int(distance*self.meter_2_ticks)):
+        if self.encoder_.reach('left', int(distance * self.meter_2_ticks)):
             pwm_front_left.stop()
             pwm_back_right.stop()
         # send all pins low & cleanup
@@ -232,7 +231,7 @@ class wheelControlled(wheel):
         pwm_left, pwm_right = pwm
         if pwm_left: pwm_left.stop()
         if pwm_right: pwm_right.stop()
-        #self.stop()
+        # self.stop()
 
         gpio.cleanup()
 
@@ -250,9 +249,19 @@ class wheelControlled(wheel):
             angle_init -= 360.0
 
         """make a range of target for desired robot orientation"""
-        angle_goal_left = ((angle_init + angle - self._tolerance) + 360.0) % 360.0  # left limit
-        angle_goal_right = max(((angle_init + angle + self._tolerance) + 360.0) % 360.0,
-                               angle_goal_left + 2 * self._tolerance)  # right limit
+        angle_goal_left = angle_init + angle
+        angle_goal_right = angle_init + angle
+        if angle > 0.0:
+            angle_goal_right += self._tolerance
+        elif angle < 0.0:
+            angle_goal_left -= self._tolerance
+        else:
+            angle_goal_right += self._tolerance
+            angle_goal_left -= self._tolerance
+
+        angle_goal_left = ((angle_goal_left) + 360.0) % 360.0  # left limit
+        angle_goal_right = max((angle_goal_right + 360.0) % 360.0, angle_goal_left)  # right limit
+
         if 270.0 < angle_goal_left:
             angle_goal_left -= 360.0
         if 270.0 < angle_goal_right:
@@ -261,18 +270,18 @@ class wheelControlled(wheel):
         """start spin"""
         try:
             self._init_ouput_pins()
-            pwm_l, pwm_r = self.spin_init()     # start pwm_l to turn left, likewise for turing right
+            pwm_l, pwm_r = self.spin_init()  # start pwm_l to turn left, likewise for turing right
             for _ in range(10000):
                 angle_current = self.imu_.angle()
                 if 270.0 < angle_current:
                     angle_current -= 360.0
 
                 print(angle_goal_left, '<', angle_current, '<', angle_goal_right)
-                if angle_current > angle_goal_left and angle_current > angle_goal_right:    # spin left if bigger than left and right limit
+                if angle_current > angle_goal_left and angle_current > angle_goal_right:  # spin left if bigger than left and right limit
                     self.spin_start(pwm_l, 90)
                 elif angle_current < angle_goal_left and angle_current < angle_goal_right:  # spin right if smaller than left and right limit
                     self.spin_start(pwm_r, 90)
-                else:                                                                       # stop pin
+                else:  # stop pin
                     break
 
             """stop spin"""
@@ -294,7 +303,8 @@ class wheelControlled(wheel):
         self._init_ouput_pins()
         angle_init = self.imu_.angle()
         angle_goal_left = ((angle_init - angle - self._tolerance) + 360.0) % 360.0  # left limit
-        angle_goal_right = max(((angle_init - angle + self._tolerance) + 360.0) % 360.0, angle_goal_left + 2*self._tolerance) # right limit
+        angle_goal_right = max(((angle_init - angle + self._tolerance) + 360.0) % 360.0,
+                               angle_goal_left + 2 * self._tolerance)  # right limit
         print(angle_init, 'to range', angle_goal_left, angle_goal_right)
 
         # independent motor control via pwm, move forward with half speed
@@ -380,15 +390,24 @@ class wheelControlled(wheel):
     def rectangle(self, side0=2.0, side1=0.5):
         self._init_ouput_pins()
 
-        self.forward(side0)     # move forward side0
-        self.turn(-90)          # turn left 90
-        self.forward(side1)     # move forward side1
-        self.turn(-90)          # turn left 90
-        self.forward(side0)     # move forward side0
-        self.turn(-90)          # turn left 90
-        self.forward(side1)     # move forward side1
-        self.turn(-90)          # turn left 90
-        return
+        """start transporting"""
+        self.forward(side0)  # move forward side0
+        self.turn(-90)  # turn left 90
+        self.forward(side1)  # move forward side1
+
+        """deliver vail"""
+
+        """go back"""
+        self.turn(-90)  # turn left 90
+        self.forward(side0)  # move forward side0
+        self.turn(-90)  # turn left 90
+        self.forward(side1)  # move forward side1
+
+        """picking up"""
+        self.turn(-90)  # turn left 90
+
+        return True
+
 
 def main():
     driver = wheel()
@@ -410,4 +429,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
