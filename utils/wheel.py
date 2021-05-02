@@ -251,8 +251,15 @@ class wheelControlled(wheel):
         angle_init = self.imu_.angle()
 
         """make a range of target for desired robot orientation"""
-        angle_goal_left = angle % 180.0
-        angle_goal_right = angle % 180.0
+        if -180.0 < angle < 180.0:
+            angle = angle
+        elif angle > 180.0:
+            angle = 360.0 - angle
+        elif angle < -180.0:
+            angle = 360.0 + angle
+
+        angle_goal_left = angle
+        angle_goal_right = angle
         if angle > 0.0:
             angle_goal_right += self._tolerance
         elif angle < 0.0:
