@@ -192,7 +192,7 @@ class wheelControlled(wheel):
         gpio.cleanup()
 
     def reverse(self, distance=1.0):
-        self._init_ouput_pins()
+        # self._init_ouput_pins()
         print('moving backward', distance)
 
         # independent motor control via pwm, move forward with half speed
