@@ -287,7 +287,10 @@ class wheelControlled(wheel):
                 angle_current = self.imu_.angle() - angle_init
                 if 180.0 < angle_current:
                     angle_current -= 360.0
-                print(angle_goal_left, '<', angle_current, '<', angle_goal_right)
+                if -180.0 > angle_current:
+                    angle_current += 360.0
+
+                print(self.imu_.angle(), ':  ', angle_goal_left, '<', angle_current, '<', angle_goal_right)
                 if angle_current > angle_goal_left and angle_current > angle_goal_right:    # spin left if bigger than left and right limit
                     self.spin_start(pwm_l, 90)
                 elif angle_current < angle_goal_left and angle_current < angle_goal_right:  # spin right if smaller than left and right limit
