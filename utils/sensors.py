@@ -56,7 +56,7 @@ class encoder():
                 print('reach the goal count')
                 return True
 
-            if counter % self.meter_2_count:
+            if counter % self.meter_2_count == 0:
                 print('encoder count to ', counter)
         return False
 
