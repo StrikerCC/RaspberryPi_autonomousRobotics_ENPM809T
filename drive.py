@@ -97,8 +97,8 @@ def main():
     arrow_info = vaccines['arrow']  # arrow info
 
     # side0, side1 = 0.8, 0.4
-    side0, side1 = 0.2, 0.2
-    step = 0.1
+    side0, side1 = 0.6, 0.4
+    step = 0.2
     dis_away_2_vail = 0.2
 
 
@@ -108,8 +108,8 @@ def main():
         """hold on for emails"""
 
         """hold on for qrcode"""
-        # vail = names[i]
-        vail = get_qrcode(camera_)
+        vail = names[i]
+        # vail = get_qrcode(camera_)
         vail_info = vaccines[vail]
 
         """looking for and pick up vail according to command"""

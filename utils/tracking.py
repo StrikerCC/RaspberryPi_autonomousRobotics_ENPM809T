@@ -102,7 +102,6 @@ def get_qrcode(camera_):
 
     while True:
         img = camera_.view_one_frame()
-        img = cv2.flip(img, -1)
         data, bbox, _ = detector.detectAndDecode(img)
 
         if bbox is not None:
