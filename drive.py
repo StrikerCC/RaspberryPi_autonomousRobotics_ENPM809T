@@ -97,6 +97,11 @@ def move_to_object(wheel_, step, angle=0.0):
 
 def main():
     names = ['J&J', 'MODERNA', 'PFIZER']
+    # names = ['J&J', 'PFIZER', 'MODERNA']
+    # names = ['MODERNA', 'J&J', 'PFIZER']
+    # names = ['MODERNA', 'PFIZER', 'J&J']
+    # names = ['PFIZER', 'J&J', 'MODERNA']
+    # names = ['PFIZER', 'MODERNA', 'J&J', ]
 
     """operation classes"""
     wheel_ = wheelControlled()    # dynamic units
@@ -119,10 +124,9 @@ def main():
         """hold on for qrcode"""
 
         vail_name, img_qrcode_vail = get_qrcode(camera_, last=50)
-        if vail_name is None:
+        if vail_name is None or vail_name not in vaccines.keys():
             vail_name = names[i]
         save_img(img_qrcode_vail, 'vail_qr', email_)
-
 
         vail_info = vaccines[vail_name]
 
