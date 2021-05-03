@@ -4,12 +4,16 @@ from picamera import PiCamera
 import time
 import cv2 
 import numpy as np
+import sys, os
 
 from imutils.video import VideoStream
 import imutils
 import time
 
-from image import find_ROI
+sys.path.insert(0, os.path.dirname(os.getcwd()))
+
+
+from RaspberryPi_autonomousRobotics_ENPM809T.utils.image import find_ROI
 
 
 class camera_pi():

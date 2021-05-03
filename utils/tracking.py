@@ -112,7 +112,7 @@ def face_detect():
     frame = imutils.resize(frame, width=400)
 
     # loop over the frames from the video stream
-    for i in range(100):
+    for i in range(20):
         # grab the frame from the threaded video stream and resize it
         # to have a maximum width of 400 pixels
         frame = vs.read()
