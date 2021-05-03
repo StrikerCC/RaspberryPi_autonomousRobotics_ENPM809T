@@ -44,13 +44,13 @@ class gripper():
 
     def open_for_vail(self):
         print('open gripper for vail')
-        for i in range(35, 70, 5):
+        for i in range(25, 70, 5):
             self.pwm.ChangeDutyCycle(i/10)
             time.sleep(0.1)
 
     def close_for_vail(self):
         print('open gripper for vail')
-        for i in range(70, 35, -5):
+        for i in range(70, 25, -5):
             self.pwm.ChangeDutyCycle(i / 10)
             time.sleep(0.1)
 

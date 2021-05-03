@@ -97,8 +97,8 @@ def main():
     arrow_info = vaccines['arrow']  # arrow info
 
     # side0, side1 = 0.8, 0.4
-    side0, side1 = 0.6, 0.3
-    step = 0.3
+    side0, side1 = 0.45, 0.3
+    step = 0.15
     dis_away_2_vail = 0.15
 
     """go live"""
@@ -128,7 +128,6 @@ def main():
         print('turn to transportation')
         wheel_.turn_to(90.0)
         # angle_vail = angle_of_object(camera_, arrow_info['threshold'])
-        gripper_.open_for_vail()                                # open gripper
         wheel_.rotate(angle_vail[0])                            # turn to the vial
 
         """start a transporting"""
@@ -143,7 +142,7 @@ def main():
 
         # move forward to injection area
         wheel_.forward(dis_away_2_vail)
-        img_face = face_detect(camera_)                                           # holding for face detection
+        img_face = face_detect(camera_)                         # holding for face detection
         gripper_.open_for_vail()                                # open gripper to put down vail
 
         print('backing up from vail')
@@ -152,7 +151,7 @@ def main():
 
         """go back"""
         print('going back to storage area')
-        wheel_.rotate(-90)  # turn left 90
+        wheel_.rotate(90)  # turn left 90
         wheel_.forward(distance=side0)  # move forward side0
 
         # use qrcode to adjust direction
