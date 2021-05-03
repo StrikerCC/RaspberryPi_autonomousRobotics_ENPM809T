@@ -70,7 +70,7 @@ paths_img = {
 }
 
 
-def save_img(name, img, email_):
+def save_img(img, name, email_):
     if name in paths_img.keys():
         cv2.imwrite(paths_img[name], img)
         email_.send('', paths_img[name])
