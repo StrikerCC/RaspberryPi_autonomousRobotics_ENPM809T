@@ -109,7 +109,7 @@ def main():
 
         """hold on for qrcode"""
         # vail = names[i]
-        vail = get_qrcode()
+        vail = get_qrcode(camera_)
         vail_info = vaccines[vail]
 
         """looking for and pick up vail according to command"""

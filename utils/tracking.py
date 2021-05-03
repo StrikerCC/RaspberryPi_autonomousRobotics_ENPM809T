@@ -22,6 +22,10 @@ import time
 
 # from RaspberryPi_autonomousRobotics_ENPM809T.utils.image import find_ROI
 
+sys.path.insert(0, os.path.dirname(os.getcwd()))
+from RaspberryPi_autonomousRobotics_ENPM809T.utils.camera_pi import camera_pi
+
+
 qrcode_results = ['J&J', 'MODERNA', 'PFIZER']
 
 # def angle_of_object(camera_, color_limit_object):
@@ -202,8 +206,8 @@ def face_detect():
 
 if __name__ == '__main__':
     print('detecting qrcode')
-    get_qrcode()
-
+    camera_ = camera_pi()
+    get_qrcode(camera_)
     print('detecting face')
     face_detect()
 

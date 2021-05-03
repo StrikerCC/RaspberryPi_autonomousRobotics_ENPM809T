@@ -17,8 +17,6 @@ import os
 
 
 sys.path.insert(0, os.path.dirname(os.getcwd()))
-
-
 from RaspberryPi_autonomousRobotics_ENPM809T.utils.camera_pi import camera_pi
 from RaspberryPi_autonomousRobotics_ENPM809T.utils.wheel import wheelControlled
 
