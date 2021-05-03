@@ -60,50 +60,21 @@ qrcode_results = ['J&J', 'MODERNA', 'PFIZER']
 #
 #     return None
 
-# def get_qrcode():
-#     command = 'sudo modprobe bcm2835-v4l2'
-#     os.system(command)
-#
-#     # open video capture
-#     cap = cv2.VideoCapture(0)
-#
-#     # define detector
-#     detector = cv2.QRCodeDetector()
-#     data = None
-#
-#     while True:
-#         check, img = cap.read()
-#         img = cv2.flip(img, -1)
-#         data, bbox, _ = detector.detectAndDecode(img)
-#
-#         if bbox is not None:
-#             for i in range(len(bbox)):
-#                 cv2.line(img, tuple(bbox[i][0]), tuple(bbox[(i + 1) % len(bbox)][0]), color=(0, 0, 255), thickness=4)
-#
-#         if data is not None:
-#             print("Data: ", data)
-#             if data in qrcode_results:
-#                 break
-#
-#         # show frame
-#         cv2.imshow("QR code detector", img)
-#         if cv2.waitKey(1) & 0xFF == ord('q'):
-#             break
-#
-#     cap.release()
-#     cv2.destroyAllWindows()
-#     return data
+def get_qrcode_command():
+    command = 'sudo modprobe bcm2835-v4l2'
+    os.system(command)
 
+    # open video capture
+    cap = cv2.VideoCapture(0)
 
-def get_qrcode(camera_):
     # define detector
     detector = cv2.QRCodeDetector()
-    # data = None
+    data = None
 
     while True:
-        img = camera_.view_one_frame()
-        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        data, bbox, _ = detector.detectAndDecode(gray)
+        check, img = cap.read()
+        img = cv2.flip(img, -1)
+        data, bbox, _ = detector.detectAndDecode(img)
 
         if bbox is not None:
             for i in range(len(bbox)):
@@ -119,8 +90,37 @@ def get_qrcode(camera_):
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
+    cap.release()
     cv2.destroyAllWindows()
     return data
+
+
+# def get_qrcode(camera_):
+#     # define detector
+#     detector = cv2.QRCodeDetector()
+#     # data = None
+#
+#     while True:
+#         img = camera_.view_one_frame()
+#         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+#         data, bbox, _ = detector.detectAndDecode(gray)
+#
+#         if bbox is not None:
+#             for i in range(len(bbox)):
+#                 cv2.line(img, tuple(bbox[i][0]), tuple(bbox[(i + 1) % len(bbox)][0]), color=(0, 0, 255), thickness=4)
+#
+#         if data is not None:
+#             print("Data: ", data)
+#             if data in qrcode_results:
+#                 break
+#
+#         # show frame
+#         cv2.imshow("QR code detector", img)
+#         if cv2.waitKey(1) & 0xFF == ord('q'):
+#             break
+#
+#     cv2.destroyAllWindows()
+#     return data
 
 
 def face_detect(camera_):
@@ -286,7 +286,8 @@ def face_detect(camera_):
 if __name__ == '__main__':
     print('detecting qrcode')
     camera_ = camera_pi()
-    get_qrcode(camera_)
+    # get_qrcode(camera_)
+    get_qrcode_command()
     print('detecting face')
     face_detect(camera_)
 
