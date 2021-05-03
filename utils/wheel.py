@@ -150,9 +150,9 @@ class wheelControlled(wheel):
         """motor control parameters for motor"""
         self.frequency = 10  # motor control frequency
         self.duty_cycle_translate = 50  # duty cycle to control motor effect voltage
-        self.duty_cycle_rotate_slow = 15
-        self.duty_cycle_rotate_med = 20
-        self.duty_cycle_rotate_fast = 30
+        self.duty_cycle_rotate_slow = 18
+        self.duty_cycle_rotate_med = 25
+        self.duty_cycle_rotate_fast = 50
 
         self.limit_duty_cycle_rotate_slow = 3.0
         self.limit_duty_cycle_rotate_med = 5.0
