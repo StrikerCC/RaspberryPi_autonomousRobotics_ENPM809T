@@ -22,6 +22,7 @@ import time
 
 from RaspberryPi_autonomousRobotics_ENPM809T.utils.image import find_ROI
 
+qrcode_results = ['J&J', 'MODERNA', 'PFIZER']
 
 def angle_of_object(camera_, color_limit_object):
     frames_out = 10000
@@ -64,6 +65,7 @@ def get_qrcode():
 
     # define detector
     detector = cv2.QRCodeDetector()
+    data = None
 
     while True:
         check, img = cap.read()
@@ -76,7 +78,8 @@ def get_qrcode():
 
         if data is not None:
             print("Data: ", data)
-            break
+            if data in qrcode_results:
+                break
 
         # show frame
         cv2.imshow("QR code detector", img)
