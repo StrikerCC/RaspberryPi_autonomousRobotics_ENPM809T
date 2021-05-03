@@ -155,8 +155,8 @@ class wheelControlled(wheel):
         self.duty_cycle_rotate_fast = 50
 
         self.limit_duty_cycle_rotate_slow = 3.0
-        self.limit_duty_cycle_rotate_med = 5.0
-        self.limit_duty_cycle_rotate_fast = 10
+        self.limit_duty_cycle_rotate_med = 10
+        self.limit_duty_cycle_rotate_fast = 15
 
         """motor control parameters for encoder"""
         self.meter_2_ticks = 98  # number of ticks per meter of travelling
