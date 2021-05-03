@@ -11,10 +11,9 @@
 
 # import lib
 import sys, os
-sys.path.insert(0, os.path.dirname(os.getcwd()))
+# sys.path.insert(0, os.path.dirname(os.getcwd()))
 
 import numpy as np
-import cv2
 
 import cv2
 from imutils.video import VideoStream
