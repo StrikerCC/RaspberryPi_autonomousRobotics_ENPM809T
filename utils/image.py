@@ -16,7 +16,8 @@ import cv2
 def color_mask(img, limits):
     img_HSV = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     cv2.imshow('HSV', img_HSV)
-    cv2.waitKey(0)
+    cv2.waitKey(1)
+    cv2.destroyAllWindows()
 
     ### hsv filter for green
     low_h, low_s, low_v = limits['low_limit']

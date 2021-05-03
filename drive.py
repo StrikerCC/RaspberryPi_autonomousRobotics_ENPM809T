@@ -112,7 +112,7 @@ def main():
     arrow_info = vaccines['arrow']  # arrow info
 
     # side0, side1 = 0.8, 0.4
-    side0, side1 = 0.8, 0.4
+    side0, side1 = 1, 0.6
     step = 0.4
     dis_away_2_vail = 0.05
 
