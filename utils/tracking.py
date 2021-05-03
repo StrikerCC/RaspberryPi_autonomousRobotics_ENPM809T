@@ -95,32 +95,32 @@ def get_qrcode_command():
     return data
 
 
-# def get_qrcode(camera_):
-#     # define detector
-#     detector = cv2.QRCodeDetector()
-#     # data = None
-#
-#     while True:
-#         img = camera_.view_one_frame()
-#         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-#         data, bbox, _ = detector.detectAndDecode(gray)
-#
-#         if bbox is not None:
-#             for i in range(len(bbox)):
-#                 cv2.line(img, tuple(bbox[i][0]), tuple(bbox[(i + 1) % len(bbox)][0]), color=(0, 0, 255), thickness=4)
-#
-#         if data is not None:
-#             print("Data: ", data)
-#             if data in qrcode_results:
-#                 break
-#
-#         # show frame
-#         cv2.imshow("QR code detector", img)
-#         if cv2.waitKey(1) & 0xFF == ord('q'):
-#             break
-#
-#     cv2.destroyAllWindows()
-#     return data
+def get_qrcode(camera_):
+    # define detector
+    detector = cv2.QRCodeDetector()
+    # data = None
+
+    while True:
+        img = camera_.view_one_frame()
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        data, bbox, _ = detector.detectAndDecode(gray)
+
+        if bbox is not None:
+            for i in range(len(bbox)):
+                cv2.line(img, tuple(bbox[i][0]), tuple(bbox[(i + 1) % len(bbox)][0]), color=(0, 0, 255), thickness=4)
+
+        if data is not None:
+            print("Data: ", data)
+            if data in qrcode_results:
+                break
+
+        # show frame
+        cv2.imshow("QR code detector", img)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
+    cv2.destroyAllWindows()
+    return data
 
 
 def face_detect(camera_):
