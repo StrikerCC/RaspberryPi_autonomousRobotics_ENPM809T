@@ -96,7 +96,7 @@ def move_to_object(wheel_, step, angle=0.0):
 
 
 def main():
-    names = ['J&J', 'MODERNA', 'PFIZER']
+    names = ['PFIZER', 'MODERNA', 'J&J']
     # names = ['J&J', 'PFIZER', 'MODERNA']
     # names = ['MODERNA', 'J&J', 'PFIZER']
     # names = ['MODERNA', 'PFIZER', 'J&J']
