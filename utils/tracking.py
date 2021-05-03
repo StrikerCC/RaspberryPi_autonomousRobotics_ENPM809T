@@ -60,7 +60,7 @@ qrcode_results = ['J&J', 'MODERNA', 'PFIZER']
 #
 #     return None
 
-def get_qrcode_command():
+def get_qr():
     command = 'sudo modprobe bcm2835-v4l2'
     os.system(command)
 
@@ -69,7 +69,6 @@ def get_qrcode_command():
 
     # define detector
     detector = cv2.QRCodeDetector()
-    data = None
 
     while True:
         check, img = cap.read()
@@ -287,7 +286,7 @@ if __name__ == '__main__':
     print('detecting qrcode')
     camera_ = camera_pi()
     # get_qrcode(camera_)
-    get_qrcode_command()
+    get_qr()
     print('detecting face')
     face_detect(camera_)
 
