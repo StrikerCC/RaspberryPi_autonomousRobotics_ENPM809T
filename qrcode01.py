@@ -12,6 +12,7 @@ detector = cv2.QRCodeDetector()
 
 while True:
     check, img = cap.read()
+    img = cv2.flip(img, -1)
     data, bbox, _ = detector.detectAndDecode(img)
 
     if bbox is not None:
