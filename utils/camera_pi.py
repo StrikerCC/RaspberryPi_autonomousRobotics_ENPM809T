@@ -226,7 +226,7 @@ def main():
     color_ = {'low_limit': (91, 124, 88),
         'up_limit': (108, 255, 255)}
     angle, img = camera_.angle_of_object(color_)
-    wheel_.rotate(angle)
+    wheel_.rotate(angle[0])
 
 
 if __name__ == '__main__':
