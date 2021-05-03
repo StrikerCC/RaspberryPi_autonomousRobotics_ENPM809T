@@ -14,6 +14,7 @@ sys.path.insert(0, os.path.dirname(os.getcwd()))
 
 
 from RaspberryPi_autonomousRobotics_ENPM809T.utils.image import find_ROI
+from RaspberryPi_autonomousRobotics_ENPM809T.utils.wheel import wheelControlled
 
 
 class camera_pi():
@@ -160,7 +161,7 @@ class camera_pi():
 
             """calculate the pixel coord"""
             angle = self.coord_img_to_pose(center)
-            angle[0] = -angle[0]
+            angle[0] = -(angle[0] + 2)
 
             if area > 5.0:    # if the pixel cluster is big enough
                 """transform to img coord"""
@@ -220,13 +221,12 @@ class recorder():
                 break
 
 def main():
-    record_ = recorder('test.avi')
-
-    a = 'this is a testing video 0'
-    record_.record(a)
-
-    a = 'this is a testing video 1'
-    record_.record(a)
+    wheel_ = wheelControlled()
+    camera_ = camera_pi()
+    color_ = {'low_limit': (91, 124, 88),
+        'up_limit': (108, 255, 255)}
+    angle, img = camera_.angle_of_object(color_)
+    wheel_.rotate(angle)
 
 
 if __name__ == '__main__':
