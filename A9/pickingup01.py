@@ -19,7 +19,6 @@ import os
 sys.path.insert(0, os.path.dirname(os.getcwd()))
 from RaspberryPi_autonomousRobotics_ENPM809T.utils.camera_pi import camera_pi
 from RaspberryPi_autonomousRobotics_ENPM809T.utils.wheel import wheelControlled
-
 from RaspberryPi_autonomousRobotics_ENPM809T.utils.image import find_ROI
 
 def keep_tracking(camera_, color_limit_object):
