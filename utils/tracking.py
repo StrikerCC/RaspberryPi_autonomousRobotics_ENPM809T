@@ -40,8 +40,9 @@ def angle_of_object(camera_, color_limit_object):
 
         """calculate the pixel coord"""
         angle = camera_.coord_img_to_pose(center)
-        if area > 5.0:    # if the pixel cluster is big enough
+        angle[0] = -angle[0]
 
+        if area > 5.0:    # if the pixel cluster is big enough
             """transform to img coord"""
             print('frame', i, 'found object at', angle, 'degree')
             return angle
