@@ -98,9 +98,8 @@ def main():
 
     # side0, side1 = 0.8, 0.4
     side0, side1 = 0.6, 0.4
-    step = 0.2
+    step = 0.3
     dis_away_2_vail = 0.2
-
 
     """go live"""
     for i in range(3):
