@@ -113,8 +113,8 @@ def main():
 
     # side0, side1 = 0.8, 0.4
     side0, side1 = 1, 0.6
-    step = 0.4
-    dis_away_2_vail = 0.2
+    step = 0.5
+    dis_away_2_vail = 0.16
 
     """go live"""
     for i in range(3):
@@ -123,7 +123,7 @@ def main():
 
         """hold on for qrcode"""
 
-        vail_name, img_qrcode_vail = get_qrcode(camera_, last=50)
+        vail_name, img_qrcode_vail = get_qrcode(camera_, last=15)
         if vail_name is None or vail_name not in vaccines.keys():
             vail_name = names[i]
         save_img(img_qrcode_vail, 'vail_qr', email_)
@@ -159,7 +159,7 @@ def main():
 
         """deliver vail"""
         print('delivering injection vial')
-        data, img_loc_qrcode = get_qrcode(camera_, last=50)
+        data, img_loc_qrcode = get_qrcode(camera_, last=10)
         save_img(img_loc_qrcode, 'qrcode', email_)
 
         # move forward to injection area
