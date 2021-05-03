@@ -107,7 +107,7 @@ def main():
     arrow_info = vaccines['arrow']  # arrow info
 
     # side0, side1 = 0.8, 0.4
-    side0, side1 = 0.2, 0.1
+    side0, side1 = 0.4, 0.2
     step = 0.12
     dis_away_2_vail = 0.05
 
@@ -172,7 +172,7 @@ def main():
         wheel_.forward(distance=side0)  # move forward side0
 
         # use qrcode to adjust direction
-        wheel_.rotate(0)  # turn left 90
+        wheel_.turn_to(0)  # turn left 90
         wheel_.forward(distance=side1)  # move forward side1
 
         """save resultant images"""
