@@ -76,6 +76,7 @@ def get_qrcode():
 
         if data is not None:
             print("Data: ", data)
+            break
 
         # show frame
         cv2.imshow("QR code detector", img)
@@ -87,7 +88,7 @@ def get_qrcode():
     return data
 
 
-def face_detect(self):
+def face_detect():
     # construct the argument parse and parse the arguments
     prototxt = '/home/pi/ENPM809T/RaspberryPi_autonomousRobotics_ENPM809T/utils/deploy.prototxt.txt',
     model = '/home/pi/ENPM809T/RaspberryPi_autonomousRobotics_ENPM809T/utils/res10_300x300_ssd_iter_140000.caffemodel',
@@ -100,6 +101,9 @@ def face_detect(self):
     print("[INFO] starting video stream...")
     vs = VideoStream(src=0).start()
     time.sleep(2.0)
+
+    frame = vs.read()
+    frame = imutils.resize(frame, width=400)
 
     # loop over the frames from the video stream
     for i in range(100):
@@ -156,3 +160,13 @@ def face_detect(self):
             break
 
     cv2.destroyAllWindows()
+    return frame
+
+
+if __name__ == '__main__':
+    print('detecting qrcode')
+    get_qrcode()
+
+    print('detecting face')
+    face_detect()
+

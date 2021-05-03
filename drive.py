@@ -14,7 +14,7 @@ from utils.wheel import wheelControlled
 from utils.camera_pi import camera_pi, recorder
 from utils.ranger import sonar
 from utils.gripper import gripper
-from utils.tracking import angle_of_object
+from utils.tracking import angle_of_object, face_detect, get_qrcode
 
 
 command = 'chengc0611@gmail.com'
@@ -97,9 +97,10 @@ def main():
 
         """hold on for emails"""
 
-        vail = names[i]
+        """hold on for qrcode"""
+        # vail = names[i]
+        vail = get_qrcode()
         vail_info = vaccines[vail]
-
 
         """looking for and pick up vail according to command"""
         print('aiming vail', vail_info['color'])
@@ -131,10 +132,10 @@ def main():
 
         """deliver vail"""
         print('delivering injection vial')
-        camera_.face_detect()
 
         # move forward to injection area
         wheel_.forward(dis_away_2_vail)
+        face_detect()                                           # holding for face detection
         gripper_.open_for_vail()                                # open gripper to put down vail
 
         print('backing up from vail')
