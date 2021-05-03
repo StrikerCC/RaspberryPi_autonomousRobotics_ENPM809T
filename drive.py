@@ -65,17 +65,13 @@ paths_img = [
 ]
 
 
-def move_to_object(wheel_, angle):
+def move_to_object(wheel_, step, angle=0):
     assert isinstance(angle, float)
     assert -360.0 < angle < 360.0, 'cannot rotate ' + str(angle) + ' degree'
-    step, dis = 0.05, 0.0
-
-    for _ in range(1000):
-        if angle > -10.0:
-            wheel_.forward(step)
-            dis += step
-        else:
-            break
+    dis = 0.0
+    # step, dis = 0.05, 0.0
+    wheel_.forward(step)
+    dis += step
     return dis
 
 
@@ -88,7 +84,9 @@ def main():
     gripper_ = gripper()
 
     """field parameters"""
-    side0, side1 = 0.8, 0.4
+    # side0, side1 = 0.8, 0.4
+    side0, side1 = 0.2, 0.2
+    step = 0.1
     dis_away_2_vail = 0.2
 
     """go live"""
@@ -107,7 +105,7 @@ def main():
         wheel_.rotate(angle_vail[0])                            # turn to the vial
 
         print('moving to vail')
-        dis_move_2_vail = move_to_object(wheel_, angle_vail[1])    # move to the vail
+        dis_move_2_vail = move_to_object(wheel_, step)    # move to the vail
         gripper_.close_for_vail()                               # close gripper to pick up
         print('backing up with vail')
         wheel_.reverse(dis_move_2_vail)                         # back up for same distance
