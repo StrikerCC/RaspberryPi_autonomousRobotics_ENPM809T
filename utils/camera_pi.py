@@ -161,7 +161,7 @@ class camera_pi():
 
             """calculate the pixel coord"""
             angle = self.coord_img_to_pose(center)
-            angle[0] = -(angle[0] - 2)
+            angle[0] = -(angle[0] - 5)
 
             if area > 5.0:    # if the pixel cluster is big enough
                 """transform to img coord"""
