@@ -70,9 +70,10 @@ paths_img = {
 }
 
 
-def save_img(name, img):
+def save_img(name, img, email_):
     if name in paths_img.keys():
         cv2.imwrite(paths_img[name], img)
+        email_.send('', paths_img[name])
         return True
     print('image saving path not found')
     return False
@@ -107,7 +108,7 @@ def main():
 
     # side0, side1 = 0.8, 0.4
     side0, side1 = 0.45, 0.3
-    step = 0.15
+    step = 0.12
     dis_away_2_vail = 0.15
 
     """go live"""
@@ -118,11 +119,14 @@ def main():
         """hold on for qrcode"""
         vail_name = names[i]
         # vail_name, img_qrcode_vail = get_qrcode(camera_, last=100)
+        # save_img(img_qrcode_vail, 'vail_qr')
+
         vail_info = vaccines[vail_name]
 
         """looking for and pick up vail according to command"""
         print('aiming vail', vail_info['color'])
         angle_vail, img_vail = camera_.angle_of_object(color_limit_object=vail_info['threshold'])
+        save_img(img_vail, 'vail', email_)
 
         gripper_.open_for_vail()                                # open gripper
         wheel_.rotate(angle_vail[0])                            # turn to the vial
@@ -136,23 +140,26 @@ def main():
         # turn to direction for transportation
         print('turn to transportation')
         wheel_.turn_to(90.0)
-        # angle_vail = angle_of_object(camera_, arrow_info['threshold'])
-        wheel_.rotate(angle_vail[0])                            # turn to the vial
 
         """start a transporting"""
         print('moving to injection area')
         wheel_.forward(distance=side0)                          # move forward side0
         # wheel_.rotate(90)                                       # turn left 90
         angle_vail, img_arrow = camera_.angle_of_object(color_limit_object=arrow_info['threshold'])
+        save_img(img_arrow, 'arrow', email_)
         wheel_.turn_to(180)                                       # turn left 90
         wheel_.forward(distance=side1)                          # move forward side1
 
         """deliver vail"""
         print('delivering injection vial')
         data, img_loc_qrcode = get_qrcode(camera_, last=15)
+        save_img(img_loc_qrcode, 'qrcode', email_)
+
         # move forward to injection area
         wheel_.forward(dis_away_2_vail)
         img_face = face_detect(camera_)                         # holding for face detection
+        save_img(img_face, 'face', email_)
+
         gripper_.open_for_vail()                                # open gripper to put down vail
 
         print('backing up from vail')
@@ -169,12 +176,9 @@ def main():
         wheel_.forward(distance=side1)  # move forward side1
 
         """save resultant images"""
-        # save_img(img_qrcode_vail, 'vail_qr')
-        save_img(img_vail, 'vail')
-        save_img(img_arrow, 'arrow')
-        save_img(img_face, 'face')
-        save_img(img_loc_qrcode, 'qrcode')
-        email_img(email_)
+
+
+        # email_img(email_)
 
         """picking up"""
         print('picking up again')
