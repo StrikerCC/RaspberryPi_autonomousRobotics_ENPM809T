@@ -114,7 +114,7 @@ def main():
     # side0, side1 = 0.8, 0.4
     side0, side1 = 1, 0.6
     step = 0.4
-    dis_away_2_vail = 0.05
+    dis_away_2_vail = 0.2
 
     """go live"""
     for i in range(3):
@@ -159,7 +159,7 @@ def main():
 
         """deliver vail"""
         print('delivering injection vial')
-        data, img_loc_qrcode = get_qrcode(camera_, last=15)
+        data, img_loc_qrcode = get_qrcode(camera_, last=50)
         save_img(img_loc_qrcode, 'qrcode', email_)
 
         # move forward to injection area

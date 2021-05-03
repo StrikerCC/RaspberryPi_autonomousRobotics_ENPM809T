@@ -155,13 +155,13 @@ class camera_pi():
             radius = np.sqrt(area/2/np.pi)
 
             cv2.circle(img, center, int(radius), (255, 155, 155), 1)
-            # cv2.imshow(str(center), img)
-            # cv2.waitKey(0)
-            # cv2.destroyAllWindows()
+            cv2.imshow(str(center), img)
+            cv2.waitKey(5)
+            cv2.destroyAllWindows()
 
             """calculate the pixel coord"""
             angle = self.coord_img_to_pose(center)
-            angle[0] = -(angle[0] - 10)
+            angle[0] = -(angle[0] - 5)
 
             if area > 5.0:    # if the pixel cluster is big enough
                 """transform to img coord"""
