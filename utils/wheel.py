@@ -150,9 +150,14 @@ class wheelControlled(wheel):
         """motor control parameters for motor"""
         self.frequency = 10  # motor control frequency
         self.duty_cycle_translate = 50  # duty cycle to control motor effect voltage
-        self.duty_cycle_rotate_slow = 10
-        self.duty_cycle_rotate_med = 15
+        self.duty_cycle_rotate_slow = 15
+        self.duty_cycle_rotate_med = 20
         self.duty_cycle_rotate_fast = 30
+
+        self.limit_duty_cycle_rotate_slow = 3.0
+        self.limit_duty_cycle_rotate_med = 5.0
+        self.limit_duty_cycle_rotate_fast = 10
+
         """motor control parameters for encoder"""
         self.meter_2_ticks = 98  # number of ticks per meter of travelling
         """motor control parameters for imu"""
@@ -307,9 +312,9 @@ class wheelControlled(wheel):
                 print(self.imu_.angle(), ':  duty cycle-', duty_cycle, 'angle-', angle_goal_left, '<', angle_diff, '<', angle_goal_right)
                 if angle_diff > angle_goal_left and angle_diff > angle_goal_right:          # spin left if bigger than left and right limit
                     """adjust duty cycle according to distance away from goal"""
-                    if abs(angle_diff-angle_goal_right) < limit_0:
+                    if abs(angle_diff-angle_goal_right) < self.limit_duty_cycle_rotate_slow:
                         duty_cycle = self.duty_cycle_rotate_slow
-                    elif limit_0 <= abs(angle_diff-angle_goal_right) < limit_1:
+                    elif self.limit_duty_cycle_rotate_slow <= abs(angle_diff-angle_goal_right) < self.limit_duty_cycle_rotate_med:
                         duty_cycle = self.duty_cycle_rotate_med
                     else:
                         duty_cycle = self.duty_cycle_rotate_fast
@@ -317,9 +322,9 @@ class wheelControlled(wheel):
                     self.spin_start(pwm_l, duty_cycle=duty_cycle)
 
                 elif angle_diff < angle_goal_left and angle_diff < angle_goal_right:        # spin right if smaller than left and right limit
-                    if abs(angle_diff - angle_goal_left) < limit_0:
+                    if abs(angle_diff - angle_goal_left) < self.limit_duty_cycle_rotate_slow:
                         duty_cycle = self.duty_cycle_rotate_slow
-                    elif limit_0 <= abs(angle_diff - angle_goal_left) < limit_1:
+                    elif self.limit_duty_cycle_rotate_slow <= abs(angle_diff - angle_goal_left) < self.limit_duty_cycle_rotate_med:
                         duty_cycle = self.duty_cycle_rotate_med
                     else:
                         duty_cycle = self.duty_cycle_rotate_fast

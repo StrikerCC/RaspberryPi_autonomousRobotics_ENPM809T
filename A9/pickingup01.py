@@ -45,11 +45,9 @@ def keep_tracking(camera_, color_limit_object):
         """calculate the pixel coord"""
         angle = camera_.coord_img_to_pose(center)
         if area > 5.0:    # if the pixel cluster is big enough
-
             """transform to img coord"""
             print('frame', i, 'found object at', angle, 'degree')
             return angle
-
         if i % 100 == 0:
             print('frame', i, 'haven\'t find object yet')
 

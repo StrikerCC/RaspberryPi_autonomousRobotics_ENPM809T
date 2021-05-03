@@ -57,6 +57,7 @@ def find_ROI(img, limits):
     # get contours
     contours, hierarchy = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     contour_biggest, area_biggest = contours[0], cv2.contourArea(contours[0])
+
     # biggest contour
     for contour in contours:
         area = cv2.contourArea(contour)

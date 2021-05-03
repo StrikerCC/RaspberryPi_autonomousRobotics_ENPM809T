@@ -65,8 +65,8 @@ paths_img = [
 ]
 
 
-def move_to_object(wheel_, step, angle=0):
-    assert isinstance(angle, float)
+def move_to_object(wheel_, step, angle=0.0):
+    assert isinstance(angle, float), angle
     assert -360.0 < angle < 360.0, 'cannot rotate ' + str(angle) + ' degree'
     dis = 0.0
     # step, dis = 0.05, 0.0
@@ -84,10 +84,13 @@ def main():
     gripper_ = gripper()
 
     """field parameters"""
+    arrow_info = vaccines['arrow']  # arrow info
+
     # side0, side1 = 0.8, 0.4
     side0, side1 = 0.2, 0.2
     step = 0.1
     dis_away_2_vail = 0.2
+
 
     """go live"""
     for i in range(3):
@@ -96,6 +99,8 @@ def main():
 
         vail = names[i]
         vail_info = vaccines[vail]
+
+
         """looking for and pick up vail according to command"""
         print('aiming vail', vail_info['color'])
         # camera_.view_some_frames(num_frames=8)
@@ -113,15 +118,20 @@ def main():
         # turn to direction for transportation
         print('turn to transportation')
         wheel_.turn_to(90.0)
+        # angle_vail = angle_of_object(camera_, arrow_info['threshold'])
+        gripper_.open_for_vail()                                # open gripper
+        wheel_.rotate(angle_vail[0])                            # turn to the vial
 
         """start a transporting"""
         print('moving to injection area')
-        wheel_.forward(distance=side0)  # move forward side0
-        wheel_.rotate(90)  # turn left 90
-        wheel_.forward(distance=side1)  # move forward side1
+        wheel_.forward(distance=side0)                          # move forward side0
+        # wheel_.rotate(90)                                       # turn left 90
+        wheel_.turn_to(180)                                       # turn left 90
+        wheel_.forward(distance=side1)                          # move forward side1
 
         """deliver vail"""
         print('delivering injection vial')
+        camera_.face_detect()
 
         # move forward to injection area
         wheel_.forward(dis_away_2_vail)
@@ -133,9 +143,11 @@ def main():
 
         """go back"""
         print('going back to storage area')
-        wheel_.rotate(90)  # turn left 90
+        wheel_.rotate(-90)  # turn left 90
         wheel_.forward(distance=side0)  # move forward side0
-        wheel_.rotate(90)  # turn left 90
+
+        # use qrcode to adjust direction
+        wheel_.rotate(0)  # turn left 90
         wheel_.forward(distance=side1)  # move forward side1
 
         """picking up"""
