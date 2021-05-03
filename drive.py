@@ -10,11 +10,13 @@
 '''
 
 # import lib
+import cv2
+
 from utils.wheel import wheelControlled
 from utils.camera_pi import camera_pi, recorder
 from utils.ranger import sonar
 from utils.gripper import gripper
-from utils.tracking import angle_of_object, face_detect, get_qrcode
+from utils.tracking import face_detect, get_qrcode #, angle_of_object
 
 
 command = 'chengc0611@gmail.com'
@@ -57,12 +59,20 @@ qrcode = {
 
 """video and image saving path"""
 path_ = './grand_results/'
-paths_img = [
-    path_ + 'vail.jpg',
-    path_ + 'qrcode.jpg',
-    path_ + 'arrow.jpg',
-    path_ + 'face.jpg'
-]
+paths_img = {
+    'vail': path_ + 'vail.jpg',
+    'qrcode': path_ + 'qrcode.jpg',
+    'arrow': path_ + 'arrow.jpg',
+    'face': path_ + 'face.jpg'
+}
+
+
+def save_img(name, img):
+    if name in paths_img.keys():
+        cv2.imwrite(paths_img[name], img)
+        return True
+    print('image saving path not found')
+    return False
 
 
 def move_to_object(wheel_, step, angle=0.0):
@@ -105,7 +115,7 @@ def main():
         """looking for and pick up vail according to command"""
         print('aiming vail', vail_info['color'])
         # camera_.view_some_frames(num_frames=8)
-        angle_vail = angle_of_object(camera_, vail_info['threshold'])
+        angle_vail = camera_.angle_of_object(color_limit_object=vail_info['threshold'])
 
         gripper_.open_for_vail()                                # open gripper
         wheel_.rotate(angle_vail[0])                            # turn to the vial

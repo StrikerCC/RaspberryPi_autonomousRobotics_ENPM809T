@@ -157,7 +157,7 @@ def face_detect():
                                 cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 255, 0), 2)
                     cv2.imshow("Frame", cv2.flip(frame, -1))
                     key = cv2.waitKey(5) & 0xFF
-                    return frame
+                    # return frame
                 # break
 
         # show the output frame

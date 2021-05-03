@@ -9,6 +9,9 @@ from imutils.video import VideoStream
 import imutils
 import time
 
+from image import find_ROI
+
+
 class camera_pi():
     def __init__(self):
         # initialize the Raspberry Pi camera
@@ -133,9 +136,39 @@ class camera_pi():
     def fov(self):
         return self.__fov
 
+    def angle_of_object(self, color_limit_object):
+        frames_out = 10000
+
+        print('looking for object like ', object, 'for', frames_out, 'frames')
+
+        """find object in current frame"""
+        for i in range(frames_out):
+            img = self.view_one_frame()
+
+            """find a contour around the object"""
+            center, area = find_ROI(img, color_limit_object)
+            radius = np.sqrt(area/2/np.pi)
+
+            cv2.circle(img, center, int(radius), (255, 155, 155), 1)
+            cv2.imshow(str(center), img)
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
+
+            """calculate the pixel coord"""
+            angle = self.coord_img_to_pose(center)
+            angle[0] = -angle[0]
+
+            if area > 5.0:    # if the pixel cluster is big enough
+                """transform to img coord"""
+                print('frame', i, 'found object at', angle, 'degree')
+                return angle
+
+            if i % 100 == 0:
+                print('frame', i, 'haven\'t find object yet')
+
+        return None
 
 
-   
 class recorder():
     def __init__(self, path):
         # initialize the Raspberry Pi camera
