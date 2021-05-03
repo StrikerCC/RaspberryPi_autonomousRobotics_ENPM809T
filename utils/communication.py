@@ -28,7 +28,9 @@ class email_pi:
         self.smtpPass = 'UKQOELRAQBOGKCCN'      # email password
 
         # destination email information
-        self.toAdd = 'chengc0611@gmail.com'
+        # self.toAdd = 'chengc0611@gmail.com'
+        self.toAdd = 'ENPM809TS19@gmail.com'
+
 
 
     def send(self, text, path):

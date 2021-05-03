@@ -85,9 +85,9 @@ def get_qr():
                 break
 
         # show frame
-        cv2.imshow("QR code detector", img)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
+        # cv2.imshow("QR code detector", img)
+        # if cv2.waitKey(1) & 0xFF == ord('q'):
+        #     break
 
     cap.release()
     cv2.destroyAllWindows()
