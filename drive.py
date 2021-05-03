@@ -96,11 +96,11 @@ def main():
         """hold on for emails"""
 
         vail = names[i]
-
+        vail_info = vaccines[vail]
         """looking for and pick up vail according to command"""
-        print('aiming vail')
+        print('aiming vail', vail_info['color'])
         # camera_.view_some_frames(num_frames=8)
-        angle_vail = angle_of_object(camera_, vaccines[vail]['threshold'])
+        angle_vail = angle_of_object(camera_, vail_info['threshold'])
 
         gripper_.open_for_vail()                                # open gripper
         wheel_.rotate(angle_vail[0])                            # turn to the vial
