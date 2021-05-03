@@ -107,8 +107,8 @@ def main():
     arrow_info = vaccines['arrow']  # arrow info
 
     # side0, side1 = 0.8, 0.4
-    side0, side1 = 0.4, 0.2
-    step = 0.12
+    side0, side1 = 0.6, 0.3
+    step = 0.4
     dis_away_2_vail = 0.05
 
     """go live"""
@@ -117,9 +117,12 @@ def main():
         """hold on for emails"""
 
         """hold on for qrcode"""
-        vail_name = names[i]
-        # vail_name, img_qrcode_vail = get_qrcode(camera_, last=100)
-        # save_img(img_qrcode_vail, 'vail_qr')
+
+        vail_name, img_qrcode_vail = get_qrcode(camera_, last=50)
+        if vail_name is None:
+            vail_name = names[i]
+        save_img(img_qrcode_vail, 'vail_qr', email_)
+
 
         vail_info = vaccines[vail_name]
 
@@ -172,7 +175,7 @@ def main():
         wheel_.forward(distance=side0)  # move forward side0
 
         # use qrcode to adjust direction
-        wheel_.turn_to(0)  # turn left 90
+        wheel_.rotate(90)  # turn left 90
         wheel_.forward(distance=side1)  # move forward side1
 
         """save resultant images"""
