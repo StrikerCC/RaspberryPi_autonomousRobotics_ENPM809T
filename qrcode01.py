@@ -23,7 +23,7 @@ while True:
 
     # show frame
     cv2.imshow("QR code detector", img)
-    if cv2.waitKey(1) & 0xFF  == ord('q'):
+    if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
 cap.release()

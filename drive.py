@@ -14,6 +14,8 @@ from utils.wheel import wheelControlled
 from utils.camera_pi import camera_pi, recorder
 from utils.ranger import sonar
 from utils.gripper import gripper
+from utils.tracking import angle_of_object
+
 
 command = 'chengc0611@gmail.com'
 # command = 'ENPM809TS19@gmail.com'
@@ -21,18 +23,31 @@ command = 'chengc0611@gmail.com'
 vaccines = {   ### hsv filter for object
     'J&J': {
         'color': 'blue',
-        'low_limit': (91, 124, 88),
-        'up_limit': (108, 255, 255)
+        'threshold': {
+            'low_limit': (91, 124, 88),
+            'up_limit': (108, 255, 255)
+        }
     },
     'MODERNA': {
         'color': 'green',
-        'low_limit': (53, 61, 34),
-        'up_limit': (84, 255, 233)
+        'threshold': {
+            'low_limit': (53, 61, 34),
+            'up_limit': (84, 255, 233)
+        }
     },
     'PFIZER': {
         'color': 'red',
-        'low_limit': (153, 29, 125),
-        'up_limit': (183, 255, 255)
+        'threshold': {
+            'low_limit': (153, 29, 125),
+            'up_limit': (183, 255, 255)
+        }
+    },
+    'arrow': {
+        'color': 'red',
+        'threshold': {
+            'low_limit': (153, 29, 125),
+            'up_limit': (183, 255, 255)
+        }
     }
 }
 
@@ -50,48 +65,55 @@ paths_img = [
 ]
 
 
+def move_to_object(wheel_, angle):
+    assert -360.0 < angle < 360.0, 'cannot rotate ' + str(angle) + ' degree'
+    step, dis = 0.05, 0.0
+
+    for _ in range(1000):
+        if angle > -10.0:
+            wheel_.forward(step)
+            dis += step
+        else:
+            break
+    return dis
+
+
 def main():
+    names = ['J&J', 'MODERNA', 'PFIZER']
+
     """operation classes"""
     wheel_ = wheelControlled()    # dynamic units
     camera_ = camera_pi()  # perception units
     gripper_ = gripper()
 
     """field parameters"""
-    side0, side1 = 0.5, 0.25
+    side0, side1 = 0.8, 0.4
+    dis_away_2_vail = 0.2
 
     """go live"""
     for i in range(3):
+
         """hold on for emails"""
+
+        vail = names[i]
 
         """looking for and pick up vail according to command"""
         print('aiming vail')
         # camera_.view_some_frames(num_frames=8)
+        angle_vail = angle_of_object(camera_, vaccines[vail]['threshold'])
 
-        gripper_.open_for_vail()  # open gripper
-        while True:
-            if not wheel_.read_user_input_then_move_acoordingly():
-                break
-        # turn to the vial
-        # gripper_.open_for_vail()    # open gripper
+        gripper_.open_for_vail()                                # open gripper
+        wheel_.rotate(angle_vail[0])                            # turn to the vial
 
-
-        # move to the vail
         print('moving to vail')
-        while True:
-            if not wheel_.read_user_input_then_move_acoordingly():
-                break
-        gripper_.close_for_vail()   # close gripper to pick up
-        # back up for same distance
+        dis_move_2_vail = move_to_object(wheel_, angle_vail)    # move to the vail
+        gripper_.close_for_vail()                               # close gripper to pick up
         print('backing up with vail')
-        while True:
-            if not wheel_.read_user_input_then_move_acoordingly():
-                break
+        wheel_.reverse(dis_move_2_vail)                         # back up for same distance
 
         # turn to direction for transportation
         print('turn to transportation')
-        while True:
-            if not wheel_.read_user_input_then_move_acoordingly():
-                break
+        wheel_.turn_to(90.0)
 
         """start a transporting"""
         print('moving to injection area')
@@ -101,20 +123,14 @@ def main():
 
         """deliver vail"""
         print('delivering injection vial')
+
         # move forward to injection area
-        while True:
-            if not wheel_.read_user_input_then_move_acoordingly():
-                break
+        wheel_.forward(dis_away_2_vail)
+        gripper_.open_for_vail()                                # open gripper to put down vail
 
-        gripper_.open_for_vail()    # open gripper to put down vail
-
-        # back up
         print('backing up from vail')
-        while True:
-            if not wheel_.read_user_input_then_move_acoordingly():
-                break
-
-        gripper_.close_for_vail()   # close gripper
+        wheel_.reverse(dis_away_2_vail)                         # back up to leave vail alone
+        gripper_.close_for_vail()                               # close gripper
 
         """go back"""
         print('going back to storage area')
@@ -129,7 +145,6 @@ def main():
         """turn to transportation route"""
         # print()
         # wheel_.rotate(90)  # turn left 90
-
     return True
 
 
