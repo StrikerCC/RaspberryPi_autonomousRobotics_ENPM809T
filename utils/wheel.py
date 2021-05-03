@@ -154,9 +154,9 @@ class wheelControlled(wheel):
         self.duty_cycle_rotate_med = 30
         self.duty_cycle_rotate_fast = 50
 
-        self.limit_duty_cycle_rotate_slow = 3.0
-        self.limit_duty_cycle_rotate_med = 10
-        self.limit_duty_cycle_rotate_fast = 15
+        self.limit_duty_cycle_rotate_slow = 10.0
+        self.limit_duty_cycle_rotate_med = 15.0
+        self.limit_duty_cycle_rotate_fast = 24.0
 
         """motor control parameters for encoder"""
         self.meter_2_ticks = 98  # number of ticks per meter of travelling
@@ -295,7 +295,7 @@ class wheelControlled(wheel):
             angle_diff = 0.001
             duty_cycle = self.duty_cycle_rotate_slow
 
-            for _ in range(360):
+            for _ in range(100):
                 angle_current = self.imu_.angle()
                 if angle_current:
                     angle_diff = angle_current - angle_init

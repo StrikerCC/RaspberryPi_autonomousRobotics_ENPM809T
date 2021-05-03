@@ -21,7 +21,7 @@ from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
 
 
-class email:
+class email_pi:
     def __init__(self):
         self.smtpUser = 'chengc0611@163.com'     # email information
         # smtpPass = 'CCws886747'
@@ -31,28 +31,28 @@ class email:
         self.toAdd = 'chengc0611@gmail.com'
 
 
-    def send(self, text):
+    def send(self, text, path):
         text = str(text)
 
         # define time stamp & record an image
-        pic_time = datetime.now().strftime('%Y%m%d%H%M%S')
-        command = 'raspistill -w 1200 -h 720 -vf -hf -o ' + pic_time + '.jpg'
-        os.system(command)
+        # path = datetime.now().strftime('%Y%m%d%H%M%S')
+        # command = 'raspistill -w 1200 -h 720 -vf -hf -o ' + pic_time + '.jpg'
+        # os.system(command)
 
         fromAdd = self.smtpUser
-        subject = 'Image recorded at ' + pic_time
+        subject = 'Image recorded of ' + path
         msg = MIMEMultipart()
         msg['Subject'] = subject
         msg['From'] = fromAdd
         msg['To'] = self.toAdd
-        msg.preamble = 'Image recorrded at ' + pic_time
+        msg.preamble = 'Image recorrded of ' + path
 
         # email text
-        body = MIMEText(text + 'Image recorded at ' + pic_time)
+        body = MIMEText(text + 'Image recorded of ' + path)
         msg.attach(body)
 
         # attach iamge
-        fp = open(pic_time + '.jpg', 'rb')
+        fp = open(path, 'rb')
         img = MIMEImage(fp.read())
         fp.close()
         msg.attach(img)
@@ -68,3 +68,4 @@ class email:
         s.quit()
 
         print('Email delivered!')
+

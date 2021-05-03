@@ -94,12 +94,12 @@ def get_qr():
     return data
 
 
-def get_qrcode(camera_):
+def get_qrcode(camera_, last=50):
     # define detector
     detector = cv2.QRCodeDetector()
-    # data = None
+    data, img = None, None
 
-    while True:
+    for i in range(last):
         img = camera_.view_one_frame()
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         data, bbox, _ = detector.detectAndDecode(gray)
@@ -119,7 +119,7 @@ def get_qrcode(camera_):
             break
 
     cv2.destroyAllWindows()
-    return data
+    return data, img
 
 
 def face_detect(camera_):
