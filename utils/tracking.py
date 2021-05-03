@@ -282,6 +282,7 @@ def face_detect(camera_):
 #     return frame
 
 
+
 if __name__ == '__main__':
     print('detecting qrcode')
     camera_ = camera_pi()

@@ -165,12 +165,12 @@ class camera_pi():
             if area > 5.0:    # if the pixel cluster is big enough
                 """transform to img coord"""
                 print('frame', i, 'found object at', angle, 'degree')
-                return angle
+                return angle, img
 
             if i % 100 == 0:
                 print('frame', i, 'haven\'t find object yet')
 
-        return None
+        return None, None
 
 
 class recorder():

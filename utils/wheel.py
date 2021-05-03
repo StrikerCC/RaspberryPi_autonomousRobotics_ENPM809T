@@ -293,10 +293,7 @@ class wheelControlled(wheel):
             self._init_ouput_pins()
             pwm_l, pwm_r = self.spin_init()  # start pwm_l to turn left, likewise for turing right
             angle_diff = 0.001
-            limit_0 = 5.0  # degree
-            limit_1 = 10.0  # degree
             duty_cycle = self.duty_cycle_rotate_slow
-            inplace = False
 
             for _ in range(360):
                 angle_current = self.imu_.angle()

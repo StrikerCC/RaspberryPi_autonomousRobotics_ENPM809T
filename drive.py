@@ -97,9 +97,9 @@ def main():
     arrow_info = vaccines['arrow']  # arrow info
 
     # side0, side1 = 0.8, 0.4
-    side0, side1 = 0.6, 0.4
+    side0, side1 = 0.6, 0.3
     step = 0.3
-    dis_away_2_vail = 0.2
+    dis_away_2_vail = 0.15
 
     """go live"""
     for i in range(3):
@@ -113,8 +113,7 @@ def main():
 
         """looking for and pick up vail according to command"""
         print('aiming vail', vail_info['color'])
-        # camera_.view_some_frames(num_frames=8)
-        angle_vail = camera_.angle_of_object(color_limit_object=vail_info['threshold'])
+        angle_vail, img_vail = camera_.angle_of_object(color_limit_object=vail_info['threshold'])
 
         gripper_.open_for_vail()                                # open gripper
         wheel_.rotate(angle_vail[0])                            # turn to the vial
@@ -144,7 +143,7 @@ def main():
 
         # move forward to injection area
         wheel_.forward(dis_away_2_vail)
-        face_detect()                                           # holding for face detection
+        img_face = face_detect(camera_)                                           # holding for face detection
         gripper_.open_for_vail()                                # open gripper to put down vail
 
         print('backing up from vail')
