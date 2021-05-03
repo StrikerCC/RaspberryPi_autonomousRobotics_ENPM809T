@@ -76,7 +76,6 @@ def get_qrcode():
 
         if data is not None:
             print("Data: ", data)
-            break
 
         # show frame
         cv2.imshow("QR code detector", img)
@@ -85,12 +84,13 @@ def get_qrcode():
 
     cap.release()
     cv2.destroyAllWindows()
+    return data
 
 
 def face_detect(self):
     # construct the argument parse and parse the arguments
-    prototxt ='deploy.prototxt.txt',
-    model = 'res10_300x300_ssd_iter_140000.caffemodel',
+    prototxt = '/home/pi/ENPM809T/RaspberryPi_autonomousRobotics_ENPM809T/utils/deploy.prototxt.txt',
+    model = '/home/pi/ENPM809T/RaspberryPi_autonomousRobotics_ENPM809T/utils/res10_300x300_ssd_iter_140000.caffemodel',
     confidence_min = 0.5,
 
     # load our serialized model from disk
@@ -142,7 +142,11 @@ def face_detect(self):
                           (0, 255, 0), 2)
             cv2.putText(frame, text, (startX, y),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 255, 0), 2)
+            cv2.imshow("Frame", cv2.flip(frame, -1))
+            key = cv2.waitKey(5) & 0xFF
+            return frame
             # break
+
         # show the output frame
         cv2.imshow("Frame", cv2.flip(frame, -1))
         key = cv2.waitKey(1) & 0xFF
